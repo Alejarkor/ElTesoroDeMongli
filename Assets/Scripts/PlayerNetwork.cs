@@ -16,12 +16,14 @@ public class PlayerNetwork : NetworkBehaviour
     public PlayerMove playerMovement;
     public GameObject character;
     public GameObject playerCanvas;
+    public float playerSpeed;
+
     //public float groundDistance = 0.5f;
     //public float moveSpeed = 3.0f;
     //public float rotationSpeed = 300.0f;
     //public float jumpForce = 8.0f;
     //public float gravity = 30.0f;
-    
+
     private Vector3 moveInput = Vector3.zero;
        
     //public float stepHeight;
@@ -113,16 +115,25 @@ public class PlayerNetwork : NetworkBehaviour
                 else
                 {                    
                     ProcessInput();
-                    if (moveInput.magnitude > 0.1f)
+                    if (moveInput.magnitude > 0.01f)
                     {
                         SendAnimatorStateRun(true);
                         anim.SetBool("run", true);
+
+                        SendAnimatorStateSpeed(moveInput.magnitude * playerSpeed / 2f);
+                        anim.SetFloat("speed", moveInput.magnitude * playerSpeed / 2f);
                     }
                     else
                     {
                         SendAnimatorStateRun(false);
                         anim.SetBool("run", false);
+
+                        SendAnimatorStateSpeed(1f);
+                        anim.SetFloat("speed", 1f);
                     }
+
+                    
+
                     SendInputToServer(playerInput.GetButton1(), moveInput);
                     MoveCharacter(playerInput.GetButton1(), moveInput, Time.deltaTime);
                     playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.1f);
@@ -183,10 +194,22 @@ public class PlayerNetwork : NetworkBehaviour
         if (isLocalPlayer) return;
         anim.SetBool("air", isAir);
     }
-       
+
+    [Command]
+    private void SendAnimatorStateSpeed(float speed)
+    {
+        SendAnimatorStateSpeedClient(speed);
+    }
+    [ClientRpc]
+    private void SendAnimatorStateSpeedClient(float speed)
+    {
+        if (isLocalPlayer) return;
+        anim.SetFloat("speed", speed);
+    }
+
 
     void MoveCharacter(bool button1, Vector3 moveDir, float deltaTime) 
     {
-        playerMovement.UpdatePlayer(moveDir, button1, deltaTime);
+        playerMovement.UpdatePlayer(moveDir, button1, deltaTime, playerSpeed);
     }   
 }

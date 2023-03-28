@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMove: MonoBehaviour
-{   
+{       
     public CharacterController player;
     public PlayerAnimatorEvents animatorEvents; 
-    public float playerSpeed;
+    //public float playerSpeed;
     public float gravity;
     public float fallVelocity;
     public float jumpForce;
@@ -18,6 +18,10 @@ public class PlayerMove: MonoBehaviour
     private Vector3 hitNormal;
     public float slideVelocity;
     public float slopeForceDown;
+
+    public float jumpCooldown = 0.2f; // Tiempo de espera después del salto antes de que se pueda saltar nuevamente
+    private float currentJumpCooldown; // Tiempo restante en el cooldown actual
+
 
     public bool onAir;
     private bool onJump;
@@ -37,13 +41,19 @@ public class PlayerMove: MonoBehaviour
         onJump = false;
     }
 
-    public void UpdatePlayer(Vector3 movePlayer, bool buttonJump, float deltaTime)
+    public void UpdatePlayer(Vector3 movePlayer, bool buttonJump, float deltaTime, float playerSpeed)
     {
         movePlayer = movePlayer * playerSpeed;  //Y lo multiplicamos por la velocidad del jugador "playerSpeed"
         player.transform.LookAt(player.transform.position + movePlayer); //Hacemos que nuestro personaje mire siempre en la direccion en la que nos estamos moviendo.
         SetGravity(ref movePlayer, deltaTime); //Llamamos a la funcion SetGravity() para aplicar la gravedad
         PlayerSkills(ref movePlayer, buttonJump); //Llamamos a la funcion PlayerSkills() para invocar las habilidades de nuestro personaje
-        player.Move(movePlayer * deltaTime); 
+        player.Move(movePlayer * deltaTime);
+
+        // Actualizar el cooldown del salto
+        if (currentJumpCooldown > 0)
+        {
+            currentJumpCooldown -= deltaTime;
+        }
     }
 
 
@@ -55,11 +65,9 @@ public class PlayerMove: MonoBehaviour
         if (IsGrounded() && buttonJump)
         {
             fallVelocity = jumpForce; //La velocidad de caida pasa a ser igual a la velocidad de salto
-            movePlayer.y = fallVelocity; //Y pasamos el valor a movePlayer.y
-            onAir = true;
+            movePlayer.y = fallVelocity; //Y pasamos el valor a movePlayer.y            
             onJump = true;
-            OnJump?.Invoke();
-            OnAir?.Invoke();
+            OnJump?.Invoke();            
         }
     }
 
@@ -77,6 +85,9 @@ public class PlayerMove: MonoBehaviour
             //La velocidad de caida es igual a la gravedad en valor negativo * Time.deltaTime.
             fallVelocity = -gravity * deltaTime;
             movePlayer.y = fallVelocity;
+
+            // Reiniciar el cooldown del salto
+            currentJumpCooldown = jumpCooldown;
         }
         else //Si no...
         {
