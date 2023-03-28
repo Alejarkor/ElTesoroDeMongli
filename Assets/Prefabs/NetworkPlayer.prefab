@@ -180,13 +180,9 @@ MonoBehaviour:
   anim: {fileID: 241015617247001821}
   playerCamera: {fileID: 445249982781089374}
   playerInput: {fileID: 5402360646422309118}
+  playerMovement: {fileID: 2428259975542727772}
   character: {fileID: 6842021257728867357}
   playerCanvas: {fileID: 5402360646422308954}
-  groundDistance: 0.2
-  moveSpeed: 3
-  rotationSpeed: 300
-  jumpForce: 8
-  gravity: 30
   isGrounded: 0
 --- !u!1 &5402360646422308952
 GameObject:
@@ -717,6 +713,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5923033701031964210}
   - component: {fileID: 5923033701031964211}
+  - component: {fileID: 2428259975542727772}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -754,10 +751,33 @@ CharacterController:
   m_Height: 4
   m_Radius: 0.7
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_StepOffset: 0.5
+  m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!114 &2428259975542727772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5923033701031964214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ebe93f995c6bed4ba02f3e779093a1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 5923033701031964211}
+  animatorEvents: {fileID: 166802063803008740}
+  playerSpeed: 5
+  gravity: 10
+  fallVelocity: 0
+  jumpForce: 5
+  groundDistance: 0.2
+  isOnSlope: 0
+  slideVelocity: 7
+  slopeForceDown: -10
+  onAir: 0
 --- !u!1001 &5923033699721707852
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1002,7 +1022,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b28c75f3c77a0b4eb4028fea2bade6e, type: 3}
   m_PrefabInstance: {fileID: 5923033699721707852}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9057343690204066788
+--- !u!114 &166802063803008740
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1011,9 +1031,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6842021257728867357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d3200c106dc25c4e8e36c36257f55b4, type: 3}
+  m_Script: {fileID: 11500000, guid: 1337991749c9716428f722fac36aa352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character3d: {fileID: 8769387930628903058}
-  characterTransform: {fileID: 5923033701031964210}
   anim: {fileID: 241015617247001821}

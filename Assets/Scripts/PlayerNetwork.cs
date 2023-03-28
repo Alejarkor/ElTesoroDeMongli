@@ -7,81 +7,124 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class PlayerNetwork : NetworkBehaviour
-{
-    //[SerializeField] private GameObject networkCameraPrefab;
-    //[SerializeField] private GameObject networkCanvasPrefab;
-
-    //private NetworkCamera netCamera;
-    //private NetworkCanvas netCanvas;
+{    
     public Transform playerTransform; 
     public CharacterController characterController;
     public Animator anim;
     public Transform playerCamera;
     public PlayerInput playerInput;
+    public PlayerMove playerMovement;
     public GameObject character;
     public GameObject playerCanvas;
-    public float groundDistance = 0.5f;
-    public float moveSpeed = 3.0f;
-    public float rotationSpeed = 300.0f;
-    public float jumpForce = 8.0f;
-    public float gravity = 30.0f;
-    private Vector3 moveDirection = Vector3.zero;
+    //public float groundDistance = 0.5f;
+    //public float moveSpeed = 3.0f;
+    //public float rotationSpeed = 300.0f;
+    //public float jumpForce = 8.0f;
+    //public float gravity = 30.0f;
     
-    private Vector3 dir;
-    private bool lastButton1Value;
-    private bool jump;
+    private Vector3 moveInput = Vector3.zero;
+       
+    //public float stepHeight;
 
-    
+
     Vector3 networkPlayerPosition;    
     Quaternion networkPlayerRotation;
     
-    Vector2 networkPlayerInputJoystick;    
-    bool networkPlayerInputButton;
+    Vector3 networkPlayerInputDirectionMovement;    
+    bool networkPlayerInputJump;
     public bool isGrounded;
 
     // Start is called before the first frame update
 
     public override void OnStartClient()
     {
-        base.OnStartClient();                
-        
+        base.OnStartClient();
+
         if (!isLocalPlayer)
-        {   
+        {
+            Destroy(playerCamera.gameObject);
             Destroy(characterController);
             Destroy(playerCamera.gameObject);
-            Destroy(playerCanvas.gameObject);
+            Destroy(playerCanvas.gameObject);            
         }
+        else 
+        {
+            playerMovement.OnAir += OnAirState;
+            playerMovement.OnJump += OnJumpState;
+            playerMovement.OnFall += OnFallState;
+        }
+    }
+
+    private void OnFallState()
+    {
+        SendAnimatorStateAir(false);
+        anim.SetBool("air", false);
+    }
+
+    private void OnJumpState()
+    {
+        anim.SetBool("jump", true);
+        SendAnimatorStateJump(true);        
+    }
+
+    private void OnAirState()
+    {
+        SendAnimatorStateAir(true);
+        anim.SetBool("air", true);
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
+        Destroy(playerCamera.gameObject);
         Destroy(character);
         Destroy(playerCamera.GetComponent<Camera>());
         Destroy(playerCamera.GetComponent<AudioListener>());
         Destroy(playerCamera.GetComponent<TactilCamera>());
         Destroy(playerCanvas.gameObject);       
-    }   
+    }
+
+    //Funcion para determinar la direccion a la que mira la camara. 
+   
+    private void ProcessInput() 
+    {
+        //Guardamos el valor de entrada horizontal y vertical para el movimiento
+        moveInput = new Vector3(playerInput.GetJoyData().x, 0, playerInput.GetJoyData().y); //los almacenamos en un Vector3
+        moveInput = playerCamera.TransformDirection(moveInput);
+        moveInput.y = 0.0f; // Prevents unwanted vertical movement
+        moveInput.Normalize();
+        moveInput *= playerInput.GetJoyData().magnitude;
+    }
 
     // Update is called once per frame
     void Update()
-    {
-        isGrounded = IsGrounded();
+    {        
         if (isServer)
         {
-            MoveCharacter(networkPlayerInputButton, networkPlayerInputJoystick);
+            MoveCharacter(networkPlayerInputJump, networkPlayerInputDirectionMovement, Time.deltaTime);
             SendTransformToClient(playerTransform.position, playerTransform.rotation);           
         }
         else if (isClient)
         {
             if (isLocalPlayer)
             {
+                if (playerCamera == null) return;
                 if (playerInput == null) return;
                 else
-                {
-                    SendInputToServer(playerInput.GetButton1(), playerInput.GetJoyData());
-                    SendCameraTransformToServer(playerCamera.position, playerCamera.rotation);
-                    ManageInputClient();
+                {                    
+                    ProcessInput();
+                    if (moveInput.magnitude > 0.1f)
+                    {
+                        SendAnimatorStateRun(true);
+                        anim.SetBool("run", true);
+                    }
+                    else
+                    {
+                        SendAnimatorStateRun(false);
+                        anim.SetBool("run", false);
+                    }
+                    SendInputToServer(playerInput.GetButton1(), moveInput);
+                    MoveCharacter(playerInput.GetButton1(), moveInput, Time.deltaTime);
                     playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.1f);
                     playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, networkPlayerRotation, 0.1f);
                 }
@@ -95,80 +138,55 @@ public class PlayerNetwork : NetworkBehaviour
     }
     
 
-    private void ManageInputClient()
-    {
-        MoveCharacter(playerInput.GetButton1(), playerInput.GetJoyData());
-    }   
-
     [Command]
-    private void SendInputToServer(bool button1, Vector2 joyData)
+    private void SendInputToServer(bool jumpAction, Vector3 moveDir)
     {
-        networkPlayerInputJoystick = joyData;
-        networkPlayerInputButton = button1;        
-    }
-
-    [Command]
-    private void SendCameraTransformToServer(Vector3 pos, Quaternion rot) 
-    {
-        playerCamera.position = Vector3.Lerp(playerCamera.position, pos,0.5f);
-        playerCamera.rotation = Quaternion.Lerp(playerCamera.rotation, rot,0.5f);
-    }
-
+        networkPlayerInputDirectionMovement = moveDir;
+        networkPlayerInputJump = jumpAction;        
+    }    
     [ClientRpc]
     private void SendTransformToClient(Vector3 position, Quaternion rotation)
     {   
         networkPlayerPosition = position;
         networkPlayerRotation = rotation;        
-    }    
-
-    void MoveCharacter(bool button1, Vector2 joy )
-    {        
-        if (button1) 
-        {
-            jump = button1 != lastButton1Value;
-        }
-        lastButton1Value = button1;       
-
-        if (characterController.isGrounded)
-        {
-            if (playerCamera == null) return;           
-            else 
-            {
-                moveDirection = new Vector3( joy.x, 0f, joy.y);
-                moveDirection = playerCamera.TransformDirection(moveDirection);
-                moveDirection.y = 0.0f; // Prevents unwanted vertical movement
-                moveDirection.Normalize();
-                dir = moveDirection;
-                FaceCharacter(moveDirection);
-                moveDirection *= moveSpeed;
-            }
-           
-        }
-
-        if (isGrounded)
-        {
-            if (jump)
-            {
-                moveDirection.y = jumpForce;
-            }
-        }
-
-        moveDirection.y -= gravity * Time.deltaTime;
-        characterController.Move(moveDirection * Time.deltaTime);        
     }
-
-    void FaceCharacter(Vector3 dir)
+    [Command]
+    private void SendAnimatorStateRun(bool isRun) 
     {
-        transform.forward = Vector3.Lerp(transform.forward, dir, 0.5f);
+        SendAnimatorStateRunClient(isRun);
     }
-
-    private bool IsGrounded()
+    [ClientRpc]
+    private void SendAnimatorStateRunClient(bool isRun)
     {
-        if (Physics.Raycast(transform.position - Vector3.down * groundDistance, Vector3.down, groundDistance * 2f))
-        {
-            return true;
-        }
-        return false;
+        if (isLocalPlayer) return;
+        anim.SetBool("run", isRun);
     }
+    [Command]
+    private void SendAnimatorStateJump(bool isJump) 
+    {
+        SendAnimatorStateJumpClient(isJump);
+    }
+    [ClientRpc]
+    private void SendAnimatorStateJumpClient(bool isJump)
+    {
+        if (isLocalPlayer) return;
+        anim.SetBool("jump", isJump);
+    }
+    [Command]
+    private void SendAnimatorStateAir(bool isAir) 
+    {
+        SendAnimatorStateAirClient(isAir);
+    }
+    [ClientRpc]
+    private void SendAnimatorStateAirClient(bool isAir)
+    {
+        if (isLocalPlayer) return;
+        anim.SetBool("air", isAir);
+    }
+       
 
+    void MoveCharacter(bool button1, Vector3 moveDir, float deltaTime) 
+    {
+        playerMovement.UpdatePlayer(moveDir, button1, deltaTime);
+    }   
 }
