@@ -4,27 +4,14 @@ using UnityEngine.UI;
 
 public class FullscreenController : MonoBehaviour
 {
+
+    [DllImport("__Internal")]
+    private static extern void FullscreenRequest();
+
     public Image image;
     public Sprite fullScreenOn;
     public Sprite fullScreenOff;
-    //public Button fullscreenButton;
 
-    //void Start()
-    //{
-    //    fullscreenButton.onClick.AddListener(GoFullscreen);
-    //}
-
-    //void GoFullscreen()
-    //{
-    //    if (Screen.fullScreenMode == FullScreenMode.Windowed)
-    //    {
-    //        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
-    //    }
-    //    else
-    //    {
-    //        Screen.fullScreenMode = FullScreenMode.Windowed;
-    //    }
-    //}
 
     public Button fullscreenButton;
 
@@ -34,7 +21,14 @@ public class FullscreenController : MonoBehaviour
     }
     void GoFullscreen()
     {
-        Application.ExternalCall("toggleFullscreen");
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            FullscreenRequest();
+        }
+        else
+        {
+            Screen.fullScreen = !Screen.fullScreen;
+        }
         SwitchSprite();
     }
 
