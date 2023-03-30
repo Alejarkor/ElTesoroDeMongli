@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 1833415694962593551}
   - component: {fileID: 1572953206145275114}
   - component: {fileID: 8769387930628903058}
+  - component: {fileID: 2501019490948924495}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -180,11 +181,27 @@ MonoBehaviour:
   anim: {fileID: 241015617247001821}
   playerCamera: {fileID: 445249982781089374}
   playerInput: {fileID: 5402360646422309118}
-  playerMovement: {fileID: 2428259975542727772}
+  playerMovement: {fileID: 3961935660050640960}
   character: {fileID: 6842021257728867357}
   playerCanvas: {fileID: 5402360646422308954}
   playerSpeed: 7
   isGrounded: 0
+--- !u!114 &2501019490948924495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3922236032030079737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7ab35a9e58c2ff43a76aed26ef31a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  anim: {fileID: 241015617247001821}
 --- !u!1 &5402360646422308952
 GameObject:
   m_ObjectHideFlags: 0
@@ -714,7 +731,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5923033701031964210}
   - component: {fileID: 5923033701031964211}
-  - component: {fileID: 2428259975542727772}
+  - component: {fileID: 3961935660050640960}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -756,7 +773,7 @@ CharacterController:
   m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 2, z: 0}
---- !u!114 &2428259975542727772
+--- !u!114 &3961935660050640960
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -765,20 +782,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 5923033701031964214}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ebe93f995c6bed4ba02f3e779093a1c, type: 3}
+  m_Script: {fileID: 11500000, guid: 1002bf9cf2cd30c45b4f70058a7be7dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 5923033701031964211}
-  animatorEvents: {fileID: 166802063803008740}
-  gravity: 10
-  fallVelocity: 0
-  jumpForce: 5
-  groundDistance: 0.2
-  isOnSlope: 0
-  slideVelocity: 7
-  slopeForceDown: -10
-  jumpCooldown: 0.2
-  onAir: 0
+  _animatorController: {fileID: 2501019490948924495}
+  MoveSpeed: 5
+  SprintSpeed: 10
+  RotationSmoothTime: 0.0841
+  SpeedChangeRate: 13.68
+  JumpHeight: 3
+  Gravity: -15
+  JumpTimeout: 0.1
+  FallTimeout: 0.05
+  Grounded: 1
+  GroundedOffset: -0.05
+  GroundedRadius: 0.28
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 65
+  TopClamp: 70
+  BottomClamp: -30
+  playerCamera: {fileID: 445249982781089374}
+  _rotationVelocity: 0.206
+  _controller: {fileID: 5923033701031964211}
 --- !u!1001 &5923033699721707852
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1013,7 +1039,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 5b28c75f3c77a0b4eb4028fea2bade6e, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 7b3efc7960cc6224e8baaf48dee36f79, type: 2}
+      objectReference: {fileID: 9100000, guid: e79c56e15ea9d694b8575387a9f32e58, type: 2}
     - target: {fileID: 5866666021909216657, guid: 5b28c75f3c77a0b4eb4028fea2bade6e, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -1052,3 +1078,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 241015617247001821}
+  LandingAudioClip: {fileID: 8300000, guid: 376954d8145a1c240936c434439b04a4, type: 3}
+  FootstepAudioClips:
+  - {fileID: 8300000, guid: a0726c5e33f05c54d8fd951e2f11d239, type: 3}
+  - {fileID: 8300000, guid: af71722a6c6dc0a47bd8d174f18939da, type: 3}
+  - {fileID: 8300000, guid: d7673f5febba6c04689ae07461226917, type: 3}
+  - {fileID: 8300000, guid: 2c7a237ce5b12284eb0a4a0660fa79e2, type: 3}
+  - {fileID: 8300000, guid: 0fdfbd2678f4b65429c16878cc0b5f1c, type: 3}
+  - {fileID: 8300000, guid: 7fe84d7209edd6d4eb3fe987bef1118a, type: 3}
+  - {fileID: 8300000, guid: de14feac0fc2dd94f8ab59d6250dcb25, type: 3}
+  - {fileID: 8300000, guid: 03b1a9386c43a71419b5b9aba0fa0c95, type: 3}
+  - {fileID: 8300000, guid: d277b15786805794687e97473a3e50a8, type: 3}
+  - {fileID: 8300000, guid: d5ba5d23f06f37d47acef05fda0f9ae1, type: 3}
+  FootstepAudioVolume: 0.5

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using StarterAssets;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -13,7 +14,7 @@ public class PlayerNetwork : NetworkBehaviour
     public Animator anim;
     public Transform playerCamera;
     public PlayerInput playerInput;
-    public PlayerMove playerMovement;
+    public ThirdPersonController1 playerMovement;
     public GameObject character;
     public GameObject playerCanvas;
     public float playerSpeed;
@@ -49,31 +50,8 @@ public class PlayerNetwork : NetworkBehaviour
             Destroy(playerCamera.gameObject);
             Destroy(playerCanvas.gameObject);            
         }
-        else 
-        {
-            playerMovement.OnAir += OnAirState;
-            playerMovement.OnJump += OnJumpState;
-            playerMovement.OnFall += OnFallState;
-        }
     }
-
-    private void OnFallState()
-    {
-        SendAnimatorStateAir(false);
-        anim.SetBool("air", false);
-    }
-
-    private void OnJumpState()
-    {
-        anim.SetBool("jump", true);
-        SendAnimatorStateJump(true);        
-    }
-
-    private void OnAirState()
-    {
-        SendAnimatorStateAir(true);
-        anim.SetBool("air", true);
-    }
+    
 
     public override void OnStartServer()
     {
@@ -115,22 +93,22 @@ public class PlayerNetwork : NetworkBehaviour
                 else
                 {                    
                     ProcessInput();
-                    if (moveInput.magnitude > 0.01f)
-                    {
-                        SendAnimatorStateRun(true);
-                        anim.SetBool("run", true);
+                    //if (moveInput.magnitude > 0.01f)
+                    //{
+                    //    SendAnimatorStateRun(true);
+                    //    anim.SetBool("run", true);
 
-                        SendAnimatorStateSpeed(moveInput.magnitude * playerSpeed / 2f);
-                        anim.SetFloat("speed", moveInput.magnitude * playerSpeed / 2f);
-                    }
-                    else
-                    {
-                        SendAnimatorStateRun(false);
-                        anim.SetBool("run", false);
+                    //    SendAnimatorStateSpeed(moveInput.magnitude * playerSpeed / 2f);
+                    //    anim.SetFloat("speed", moveInput.magnitude * playerSpeed / 2f);
+                    //}
+                    //else
+                    //{
+                    //    SendAnimatorStateRun(false);
+                    //    anim.SetBool("run", false);
 
-                        SendAnimatorStateSpeed(1f);
-                        anim.SetFloat("speed", 1f);
-                    }
+                    //    SendAnimatorStateSpeed(1f);
+                    //    anim.SetFloat("speed", 1f);
+                    //}
 
                     
 
@@ -161,55 +139,55 @@ public class PlayerNetwork : NetworkBehaviour
         networkPlayerPosition = position;
         networkPlayerRotation = rotation;        
     }
-    [Command]
-    private void SendAnimatorStateRun(bool isRun) 
-    {
-        SendAnimatorStateRunClient(isRun);
-    }
-    [ClientRpc]
-    private void SendAnimatorStateRunClient(bool isRun)
-    {
-        if (isLocalPlayer) return;
-        anim.SetBool("run", isRun);
-    }
-    [Command]
-    private void SendAnimatorStateJump(bool isJump) 
-    {
-        SendAnimatorStateJumpClient(isJump);
-    }
-    [ClientRpc]
-    private void SendAnimatorStateJumpClient(bool isJump)
-    {
-        if (isLocalPlayer) return;
-        anim.SetBool("jump", isJump);
-    }
-    [Command]
-    private void SendAnimatorStateAir(bool isAir) 
-    {
-        SendAnimatorStateAirClient(isAir);
-    }
-    [ClientRpc]
-    private void SendAnimatorStateAirClient(bool isAir)
-    {
-        if (isLocalPlayer) return;
-        anim.SetBool("air", isAir);
-    }
+    //[Command]
+    //private void SendAnimatorStateRun(bool isRun) 
+    //{
+    //    SendAnimatorStateRunClient(isRun);
+    //}
+    //[ClientRpc]
+    //private void SendAnimatorStateRunClient(bool isRun)
+    //{
+    //    if (isLocalPlayer) return;
+    //    anim.SetBool("run", isRun);
+    //}
+    //[Command]
+    //private void SendAnimatorStateJump(bool isJump) 
+    //{
+    //    SendAnimatorStateJumpClient(isJump);
+    //}
+    //[ClientRpc]
+    //private void SendAnimatorStateJumpClient(bool isJump)
+    //{
+    //    if (isLocalPlayer) return;
+    //    anim.SetBool("jump", isJump);
+    //}
+    //[Command]
+    //private void SendAnimatorStateAir(bool isAir) 
+    //{
+    //    SendAnimatorStateAirClient(isAir);
+    //}
+    //[ClientRpc]
+    //private void SendAnimatorStateAirClient(bool isAir)
+    //{
+    //    if (isLocalPlayer) return;
+    //    anim.SetBool("air", isAir);
+    //}
 
-    [Command]
-    private void SendAnimatorStateSpeed(float speed)
-    {
-        SendAnimatorStateSpeedClient(speed);
-    }
-    [ClientRpc]
-    private void SendAnimatorStateSpeedClient(float speed)
-    {
-        if (isLocalPlayer) return;
-        anim.SetFloat("speed", speed);
-    }
+    //[Command]
+    //private void SendAnimatorStateSpeed(float speed)
+    //{
+    //    SendAnimatorStateSpeedClient(speed);
+    //}
+    //[ClientRpc]
+    //private void SendAnimatorStateSpeedClient(float speed)
+    //{
+    //    if (isLocalPlayer) return;
+    //    anim.SetFloat("speed", speed);
+    //}
 
 
     void MoveCharacter(bool button1, Vector3 moveDir, float deltaTime) 
     {
-        playerMovement.UpdatePlayer(moveDir, button1, deltaTime, playerSpeed);
+        playerMovement.UpdatePlayer(moveDir, button1, deltaTime);
     }   
 }

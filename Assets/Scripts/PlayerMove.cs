@@ -33,7 +33,7 @@ public class PlayerMove: MonoBehaviour
 
     public void Start()
     {
-        animatorEvents.OnEndJump += OnEndJump;
+       //animatorEvents.OnEndJump += OnEndJump;
     }
 
     private void OnEndJump()
