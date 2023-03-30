@@ -19,25 +19,15 @@ public class PlayerNetwork : NetworkBehaviour
     public GameObject playerCanvas;
     public float playerSpeed;
 
-    //public float groundDistance = 0.5f;
-    //public float moveSpeed = 3.0f;
-    //public float rotationSpeed = 300.0f;
-    //public float jumpForce = 8.0f;
-    //public float gravity = 30.0f;
-
-    private Vector3 moveInput = Vector3.zero;
-       
-    //public float stepHeight;
-
+    private Vector3 moveInput = Vector3.zero;      
+    
 
     Vector3 networkPlayerPosition;    
     Quaternion networkPlayerRotation;
     
     Vector3 networkPlayerInputDirectionMovement;    
     bool networkPlayerInputJump;
-    public bool isGrounded;
-
-    // Start is called before the first frame update
+    public bool isGrounded;   
 
     public override void OnStartClient()
     {
@@ -64,7 +54,6 @@ public class PlayerNetwork : NetworkBehaviour
         Destroy(playerCanvas.gameObject);       
     }
 
-    //Funcion para determinar la direccion a la que mira la camara. 
    
     private void ProcessInput() 
     {
@@ -92,25 +81,7 @@ public class PlayerNetwork : NetworkBehaviour
                 if (playerInput == null) return;
                 else
                 {                    
-                    ProcessInput();
-                    //if (moveInput.magnitude > 0.01f)
-                    //{
-                    //    SendAnimatorStateRun(true);
-                    //    anim.SetBool("run", true);
-
-                    //    SendAnimatorStateSpeed(moveInput.magnitude * playerSpeed / 2f);
-                    //    anim.SetFloat("speed", moveInput.magnitude * playerSpeed / 2f);
-                    //}
-                    //else
-                    //{
-                    //    SendAnimatorStateRun(false);
-                    //    anim.SetBool("run", false);
-
-                    //    SendAnimatorStateSpeed(1f);
-                    //    anim.SetFloat("speed", 1f);
-                    //}
-
-                    
+                    ProcessInput();     
 
                     SendInputToServer(playerInput.GetButton1(), moveInput);
                     MoveCharacter(playerInput.GetButton1(), moveInput, Time.deltaTime);
@@ -138,53 +109,7 @@ public class PlayerNetwork : NetworkBehaviour
     {   
         networkPlayerPosition = position;
         networkPlayerRotation = rotation;        
-    }
-    //[Command]
-    //private void SendAnimatorStateRun(bool isRun) 
-    //{
-    //    SendAnimatorStateRunClient(isRun);
-    //}
-    //[ClientRpc]
-    //private void SendAnimatorStateRunClient(bool isRun)
-    //{
-    //    if (isLocalPlayer) return;
-    //    anim.SetBool("run", isRun);
-    //}
-    //[Command]
-    //private void SendAnimatorStateJump(bool isJump) 
-    //{
-    //    SendAnimatorStateJumpClient(isJump);
-    //}
-    //[ClientRpc]
-    //private void SendAnimatorStateJumpClient(bool isJump)
-    //{
-    //    if (isLocalPlayer) return;
-    //    anim.SetBool("jump", isJump);
-    //}
-    //[Command]
-    //private void SendAnimatorStateAir(bool isAir) 
-    //{
-    //    SendAnimatorStateAirClient(isAir);
-    //}
-    //[ClientRpc]
-    //private void SendAnimatorStateAirClient(bool isAir)
-    //{
-    //    if (isLocalPlayer) return;
-    //    anim.SetBool("air", isAir);
-    //}
-
-    //[Command]
-    //private void SendAnimatorStateSpeed(float speed)
-    //{
-    //    SendAnimatorStateSpeedClient(speed);
-    //}
-    //[ClientRpc]
-    //private void SendAnimatorStateSpeedClient(float speed)
-    //{
-    //    if (isLocalPlayer) return;
-    //    anim.SetFloat("speed", speed);
-    //}
-
+    }  
 
     void MoveCharacter(bool button1, Vector3 moveDir, float deltaTime) 
     {

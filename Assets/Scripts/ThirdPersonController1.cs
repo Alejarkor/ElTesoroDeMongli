@@ -16,6 +16,7 @@ namespace StarterAssets
     public class ThirdPersonController1 : MonoBehaviour
     {
         public AnimatorControllerAdv _animatorController;
+        
         //public PlayerNetwork playerNetwork;
 
         [Header("Player")]
