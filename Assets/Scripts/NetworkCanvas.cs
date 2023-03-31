@@ -39,7 +39,7 @@ public class NetworkCanvas : NetworkBehaviour
         Destroy(GetComponent<CanvasScaler>());
         Destroy(GetComponent<GraphicRaycaster>());
         Destroy(GetComponent<Canvas>());
-        Destroy(GetComponent<PlayerInput>());
+        Destroy(GetComponent<PlayerInputCustom>());
         Transform[] childs = transform.GetComponentsInChildren<Transform>();
         foreach (Transform child in childs) 
         {

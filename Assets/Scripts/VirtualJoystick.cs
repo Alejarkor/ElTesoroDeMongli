@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
@@ -11,6 +12,9 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     public Vector2 InputDirection { get; private set; }
     public Vector2 value;
     private Vector2 startPosition;
+
+    public event System.Action<int> OnTouchId;
+    public event System.Action<int> OnTouchIdEnded;
 
     private void Start()
     {
@@ -35,6 +39,12 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     public void OnPointerDown(PointerEventData eventData)
     {
         OnDrag(eventData);
+        if (eventData is ExtendedPointerEventData extendedEventData)
+        {
+            Debug.Log("button " + this.gameObject.name + " pressed. ID: " + extendedEventData.touchId);
+            int touchId = extendedEventData.touchId;
+            OnTouchId?.Invoke(touchId);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -42,5 +52,11 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         InputDirection = Vector2.zero;
         value = InputDirection;
         joystickImage.rectTransform.anchoredPosition = Vector2.zero;
+        if (eventData is ExtendedPointerEventData extendedEventData)
+        {
+            int touchId = extendedEventData.touchId;
+            OnTouchIdEnded?.Invoke(touchId);
+        }
     }
+
 }

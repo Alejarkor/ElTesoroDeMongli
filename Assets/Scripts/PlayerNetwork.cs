@@ -6,6 +6,8 @@ using StarterAssets;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
+using Cinemachine;
 
 public class PlayerNetwork : NetworkBehaviour
 {    
@@ -13,20 +15,24 @@ public class PlayerNetwork : NetworkBehaviour
     public CharacterController characterController;
     public Animator anim;
     public Transform playerCamera;
-    public PlayerInput playerInput;
+    
     public ThirdPersonController1 playerMovement;
     public GameObject character;
     public GameObject playerCanvas;
     public float playerSpeed;
 
-    private Vector3 moveInput = Vector3.zero;      
+    private Vector2 moveInput;
+    private Vector2 moveInputProcessed;
     
+    private bool jumpInput;
+    private bool actionInput;
 
     Vector3 networkPlayerPosition;    
     Quaternion networkPlayerRotation;
     
     Vector3 networkPlayerInputDirectionMovement;    
     bool networkPlayerInputJump;
+    bool networkPlayerInputAction;
     public bool isGrounded;   
 
     public override void OnStartClient()
@@ -36,9 +42,12 @@ public class PlayerNetwork : NetworkBehaviour
         if (!isLocalPlayer)
         {
             Destroy(playerCamera.gameObject);
+            Destroy(playerCanvas.gameObject);
+            Destroy(characterController.transform.GetComponent<ThirdPersonController1>());
             Destroy(characterController);
-            Destroy(playerCamera.gameObject);
-            Destroy(playerCanvas.gameObject);            
+            Destroy(GetComponent<PlayerInput>());            
+            Destroy(GetComponent<InputSwitcher>());
+            Destroy(GetComponentInChildren<CinemachineFreeLook>().gameObject);
         }
     }
     
@@ -47,22 +56,21 @@ public class PlayerNetwork : NetworkBehaviour
     {
         base.OnStartServer();
         Destroy(playerCamera.gameObject);
+        Destroy(playerCanvas.gameObject);
         Destroy(character);
-        Destroy(playerCamera.GetComponent<Camera>());
-        Destroy(playerCamera.GetComponent<AudioListener>());
-        Destroy(playerCamera.GetComponent<TactilCamera>());
-        Destroy(playerCanvas.gameObject);       
+        Destroy(GetComponent<PlayerInput>());        
+        Destroy(GetComponent<AnimatorController>());
+        Destroy(GetComponent<InputSwitcher>());
+        Destroy(GetComponentInChildren<CinemachineFreeLook>().gameObject);
     }
 
    
     private void ProcessInput() 
-    {
-        //Guardamos el valor de entrada horizontal y vertical para el movimiento
-        moveInput = new Vector3(playerInput.GetMoveInput().x, 0, playerInput.GetMoveInput().y); //los almacenamos en un Vector3
-        moveInput = playerCamera.TransformDirection(moveInput);
-        moveInput.y = 0.0f; // Prevents unwanted vertical movement
-        moveInput.Normalize();
-        moveInput *= playerInput.GetMoveInput().magnitude;
+    {        
+        Vector3 moveInputVector3 = playerCamera.TransformDirection(new Vector3(moveInput.x, 0f, moveInput.y));
+        moveInputProcessed = new Vector2(moveInputVector3.x, moveInputVector3.z);        
+        moveInputProcessed.Normalize();
+        moveInputProcessed *= moveInput.magnitude;
     }
 
     // Update is called once per frame
@@ -71,22 +79,22 @@ public class PlayerNetwork : NetworkBehaviour
         if (isServer)
         {
             MoveCharacter(networkPlayerInputJump, networkPlayerInputDirectionMovement, Time.deltaTime);
-            SendTransformToClient(playerTransform.position, playerTransform.rotation);           
+            SendTransformToClient(playerTransform.position, playerTransform.rotation);
+            networkPlayerInputJump = false;
+            networkPlayerInputAction = false;
         }
         else if (isClient)
         {
             if (isLocalPlayer)
             {
-                if (playerCamera == null) return;
-                if (playerInput == null) return;
+                if (playerCamera == null) return;                
                 else
                 {                    
-                    ProcessInput();     
-
-                    SendInputToServer(playerInput.GetJump(), moveInput);
-                    MoveCharacter(playerInput.GetJump(), moveInput, Time.deltaTime);
+                    ProcessInput(); 
+                    MoveCharacter(jumpInput, moveInputProcessed, Time.deltaTime);
                     playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.1f);
                     playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, networkPlayerRotation, 0.1f);
+                    jumpInput = false;
                 }
             }
             else 
@@ -98,12 +106,27 @@ public class PlayerNetwork : NetworkBehaviour
     }
     
 
+    
     [Command]
-    private void SendInputToServer(bool jumpAction, Vector3 moveDir)
+    private void SendJumpInputToServer(bool jumpAction)
+    {        
+        networkPlayerInputJump = jumpAction;
+    }
+
+    [Command]
+    private void SendMoveInputToServer(Vector3 moveDir)
     {
-        networkPlayerInputDirectionMovement = moveDir;
-        networkPlayerInputJump = jumpAction;        
-    }    
+        networkPlayerInputDirectionMovement = moveDir;        
+    }
+
+    [Command]
+    private void SendActionInputToServer(bool actionInput)
+    {
+        networkPlayerInputAction = actionInput;
+    }
+
+
+
     [ClientRpc]
     private void SendTransformToClient(Vector3 position, Quaternion rotation)
     {   
@@ -114,5 +137,30 @@ public class PlayerNetwork : NetworkBehaviour
     void MoveCharacter(bool button1, Vector3 moveDir, float deltaTime) 
     {
         playerMovement.UpdatePlayer(moveDir, button1, deltaTime);
-    }   
+    }
+
+
+
+    private void OnMovement(InputValue value) 
+    {
+        moveInput = value.Get<Vector2>();
+        ProcessInput();
+        if (isLocalPlayer) SendMoveInputToServer(moveInputProcessed);
+
+    }
+    private void OnJump(InputValue value)
+    {
+        jumpInput = value.Get<float>()==1?true:false;
+        if (isLocalPlayer) SendJumpInputToServer(jumpInput);
+    }
+    private void OnAction(InputValue value)
+    {
+        actionInput = value.Get<float>() == 1 ? true : false;
+        if (isLocalPlayer) SendActionInputToServer(actionInput);
+    }
+    private void OnCamMovement(InputValue value)
+    {       
+        ProcessInput();
+        if (isLocalPlayer) SendMoveInputToServer(moveInputProcessed);
+    }
 }

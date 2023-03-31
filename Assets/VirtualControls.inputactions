@@ -1,0 +1,54 @@
+{
+    "name": "VirtualControls",
+    "maps": [
+        {
+            "name": "TouchControls",
+            "id": "50593804-045e-4b01-a407-83212af80dd8",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "63f30c6b-6bf9-4a6e-8f76-b2a5caad7d4c",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "30efbb62-34a0-47eb-a850-5ac418d48b80",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "173451c3-ebe2-431b-8282-1f98aea6ca83",
+                    "path": "<Touchscreen>/primaryTouch/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a13a5a20-2d50-4183-b820-8d6b042a61f4",
+                    "path": "<Touchscreen>/touch*/Press",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -24,15 +24,13 @@ public class DetectMobileDevice : Singleton<DetectMobileDevice>
     void Start()
     {
         if (IsOnMobileDevice())
-        {
-            Debuger.Instance.DebugMsg("Running on a mobile device", Debuger.debugType.normal);
+        {            
             Debug.Log("Running on a mobile device");
             OnDeviceRunningDetected?.Invoke(deviceType.mobile);
             m_deviceType = deviceType.mobile;
         }
         else
-        {
-            Debuger.Instance.DebugMsg("Not running on a mobile device", Debuger.debugType.normal);
+        {            
             Debug.Log("Not running on a mobile device");
             OnDeviceRunningDetected?.Invoke(deviceType.desktop);
             m_deviceType = deviceType.desktop;

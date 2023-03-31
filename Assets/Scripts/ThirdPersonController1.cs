@@ -84,6 +84,7 @@ namespace StarterAssets
         private float _fallTimeoutDelta;       
 
         private Vector3 targetLookAt;
+        private Vector3 inputDirection;
 
         public CharacterController _controller;     
                
@@ -117,8 +118,9 @@ namespace StarterAssets
             }
         }
 
-        private void Move(Vector3 inputVector, float deltaTime)
+        private void Move(Vector2 inputVector, float deltaTime)
         {
+            
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = inputVector.magnitude * SprintSpeed;            
 
@@ -150,13 +152,13 @@ namespace StarterAssets
 
             //TODO: Aqui creo qeu se puede ahorrar inputDirecction y meter directamente inputVector si el inPutVector viene ya con cero en y
             // normalise input direction
-            Vector3 inputDirection = new Vector3(inputVector.x, 0.0f, inputVector.y).normalized;
+            inputDirection = new Vector3(inputVector.x, 0.0f, inputVector.y).normalized;
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (inputVector != Vector3.zero)
+            if (inputVector != Vector2.zero)
             {
-                targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + inputVector, _rotationVelocity);
+                targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + inputDirection, _rotationVelocity);
                 transform.LookAt(targetLookAt);
             }
 
@@ -164,7 +166,7 @@ namespace StarterAssets
             //Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
             // move the player
-            _controller.Move(inputVector.normalized * (_speed * deltaTime) +
+            _controller.Move(inputDirection.normalized * (_speed * deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime);
 
             // update animator if using character
