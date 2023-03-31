@@ -58,11 +58,11 @@ public class PlayerNetwork : NetworkBehaviour
     private void ProcessInput() 
     {
         //Guardamos el valor de entrada horizontal y vertical para el movimiento
-        moveInput = new Vector3(playerInput.GetJoyData().x, 0, playerInput.GetJoyData().y); //los almacenamos en un Vector3
+        moveInput = new Vector3(playerInput.GetMoveInput().x, 0, playerInput.GetMoveInput().y); //los almacenamos en un Vector3
         moveInput = playerCamera.TransformDirection(moveInput);
         moveInput.y = 0.0f; // Prevents unwanted vertical movement
         moveInput.Normalize();
-        moveInput *= playerInput.GetJoyData().magnitude;
+        moveInput *= playerInput.GetMoveInput().magnitude;
     }
 
     // Update is called once per frame
@@ -83,8 +83,8 @@ public class PlayerNetwork : NetworkBehaviour
                 {                    
                     ProcessInput();     
 
-                    SendInputToServer(playerInput.GetButton1(), moveInput);
-                    MoveCharacter(playerInput.GetButton1(), moveInput, Time.deltaTime);
+                    SendInputToServer(playerInput.GetJump(), moveInput);
+                    MoveCharacter(playerInput.GetJump(), moveInput, Time.deltaTime);
                     playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.1f);
                     playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, networkPlayerRotation, 0.1f);
                 }

@@ -3,17 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
-{
-    public VirtualButton vButton;
-    public VirtualJoystick vJoy;
+{    
+    
+    public InputConnector mobileInput;
+    public InputConnector desktopInput;
 
-    public Vector2 GetJoyData() 
+    public Vector2 GetMoveInput() 
     {
-        return vJoy.value;
+        if (DetectMobileDevice.Instance.IsOnMobileDeviceRunning)
+        {
+            return mobileInput.GetMoveInput();
+        }
+        else 
+        {
+            return desktopInput.GetMoveInput();
+        }
     }
 
-    public bool GetButton1() 
+    public Vector2 GetCameraMoveInput() 
     {
-        return vButton.value;
+        if (DetectMobileDevice.Instance.IsOnMobileDeviceRunning)
+        {
+            return mobileInput.GetCameraMoveInput();
+        }
+        else
+        {
+            return desktopInput.GetCameraMoveInput();
+        }
+    }
+
+    public bool GetAction() 
+    {
+        if (DetectMobileDevice.Instance.IsOnMobileDeviceRunning)
+        {
+            return mobileInput.GetAction();
+        }
+        else
+        {
+            return desktopInput.GetAction();
+        }
+    }
+
+    public bool GetJump() 
+    {
+        if (DetectMobileDevice.Instance.IsOnMobileDeviceRunning)
+        {
+            return mobileInput.GetJump();
+        }
+        else
+        {
+            return desktopInput.GetJump();
+        }
     }   
 }
