@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using UnityEngine.InputSystem.LowLevel;
 
 public class PlayerNetwork : NetworkBehaviour
 {    
@@ -33,7 +34,12 @@ public class PlayerNetwork : NetworkBehaviour
     Vector3 networkPlayerInputDirectionMovement;    
     bool networkPlayerInputJump;
     bool networkPlayerInputAction;
-    public bool isGrounded;   
+    public bool isGrounded;
+
+    public CameraInput camInput;
+    private string currentControlScheme;
+
+    
 
     public override void OnStartClient()
     {
@@ -45,13 +51,24 @@ public class PlayerNetwork : NetworkBehaviour
             Destroy(playerCanvas.gameObject);
             Destroy(characterController.transform.GetComponent<ThirdPersonController1>());
             Destroy(characterController);
-            Destroy(GetComponent<PlayerInput>());            
+            Destroy(GetComponent<PlayerInput>());
             Destroy(GetComponent<InputSwitcher>());
             Destroy(GetComponentInChildren<CinemachineFreeLook>().gameObject);
         }
+        //else 
+        //{
+        //    camInput.OnUpdateCameraInput += OnUpdateCamInput;
+        //}
     }
-    
 
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        //if (isLocalPlayer) 
+        //{
+        //    camInput.OnUpdateCameraInput -= OnUpdateCamInput;
+        //}
+    }
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -90,7 +107,8 @@ public class PlayerNetwork : NetworkBehaviour
                 if (playerCamera == null) return;                
                 else
                 {                    
-                    ProcessInput(); 
+                    ProcessInput();
+                    SendMoveInputToServer(moveInputProcessed);
                     MoveCharacter(jumpInput, moveInputProcessed, Time.deltaTime);
                     playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.1f);
                     playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, networkPlayerRotation, 0.1f);
@@ -146,7 +164,6 @@ public class PlayerNetwork : NetworkBehaviour
         moveInput = value.Get<Vector2>();
         ProcessInput();
         if (isLocalPlayer) SendMoveInputToServer(moveInputProcessed);
-
     }
     private void OnJump(InputValue value)
     {
@@ -158,9 +175,9 @@ public class PlayerNetwork : NetworkBehaviour
         actionInput = value.Get<float>() == 1 ? true : false;
         if (isLocalPlayer) SendActionInputToServer(actionInput);
     }
-    private void OnCamMovement(InputValue value)
-    {       
-        ProcessInput();
-        if (isLocalPlayer) SendMoveInputToServer(moveInputProcessed);
-    }
+    //private void OnUpdateCamInput()
+    //{
+    //    ProcessInput();
+    //    if (isLocalPlayer) SendMoveInputToServer(moveInputProcessed);
+    //}
 }

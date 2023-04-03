@@ -946,8 +946,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1632142731}
-  m_LocalRotation: {x: 0.20803168, y: -0.025712967, z: 0.0054707327, w: 0.9777688}
-  m_LocalPosition: {x: 0.5, y: 5.22, z: -9.5}
+  m_LocalRotation: {x: 0.0257533, y: 0.9516148, z: -0.29470438, w: 0.08315868}
+  m_LocalPosition: {x: -6.802682, y: 29.37, z: 42.025536}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -985,11 +985,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 62.060112
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 40
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -2373,7 +2373,7 @@ MonoBehaviour:
   playerTransform: {fileID: 1735990319888355042}
   characterController: {fileID: 1735990319888355043}
   anim: {fileID: 5221140557297673781}
-  playerCamera: {fileID: 0}
+  playerCamera: {fileID: 1632142732}
   playerMovement: {fileID: 8997683285079249040}
   character: {fileID: 1308896422}
   playerCanvas: {fileID: 62105201302440074}
