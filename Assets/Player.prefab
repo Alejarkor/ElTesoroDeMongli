@@ -29,6 +29,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5568621331741882869}
   m_Father: {fileID: 0}
@@ -86,7 +87,7 @@ MonoBehaviour:
   crosshairSprite: {fileID: 0}
   cameraPerspective: 1
   automaticallySwitchPerspective: 0
-  perspectiveSwitchingKey_L: 0
+  perspectiveSwitchingKey: 31
   mouseInputInversion: 0
   Sensitivity: 18.88
   rotationWeight: 3.7
@@ -107,11 +108,11 @@ MonoBehaviour:
   enableMovementControl: 1
   walkingSpeed: 400
   sprintingSpeed: 650
-  crouchingSpeed: 45
-  decelerationSpeed: 240
-  sprintKey_L: 304
-  crouchKey_L: 306
-  slideKey_L: 118
+  crouchingSpeed: 39
+  decelerationSpeed: 300
+  sprintKey: 51
+  crouchKey: 55
+  slideKey: 36
   canSprint: 1
   isSprinting: 0
   toggleSprint: 0
@@ -120,56 +121,57 @@ MonoBehaviour:
   isCrouching: 0
   toggleCrouch: 1
   crouchOverride: 0
-  isIdle: 0
+  isIdle: 1
   currentStance: 0
-  stanceTransitionSpeed: 5
+  stanceTransitionSpeed: 10
   crouchingHeight: 0.8
   currentGroundMovementSpeed: 1
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 51
+    m_Bits: 1
   hardSlopeLimit: 45
   slopeInfluenceOnSpeed: 1
-  maxStairRise: 0.5
-  stepUpSpeed: 0.139
+  maxStairRise: 1.5
+  stepUpSpeed: 0.45
   canJump: 1
   holdJump: 0
-  jumpEnhancements: 0
+  jumpEnhancements: 1
   Jumped: 0
-  jumpKey_L: 114
-  jumpPower: 95
-  airControlFactor: 0.287
-  decentMultiplier: 3
-  tapJumpMultiplier: 2
+  jumpKey: 1
+  jumpPower: 78
+  airControlFactor: 1
+  decentMultiplier: 1.86
+  tapJumpMultiplier: 2.88
   isSliding: 0
-  canSlide: 0
+  canSlide: 1
   slidingDeceleration: 150
   slidingTransitionSpeed: 4
   maxFlatSlideDistance: 10
   currentGroundInfo:
-    isInContactWithGround: 0
-    isGettingGroundInfo: 0
+    isInContactWithGround: 1
+    isGettingGroundInfo: 1
     potentialStair: 0
     groundAngleMultiplier_Inverse: 1
     groundAngleMultiplier_Inverse_persistent: 1
     groundAngleMultiplier: 0
     groundAngle: 0
     groundAngle_Raw: 0
-    playerGroundPosition: 0
-    groundRawYPosition: 0
+    playerGroundPosition: 1.0100125
+    groundRawYPosition: 0.000012515036
     groundInfluenceDirection: {x: 0, y: 0, z: 0}
-    groundNormal_Averaged: {x: 0, y: 0, z: 0}
-    groundNormal_Raw: {x: 0, y: 0, z: 0}
-    groundNormals_lowgrade: []
+    groundNormal_Averaged: {x: -0.000003822342, y: 1, z: 0}
+    groundNormal_Raw: {x: -0.00000074505795, y: 1, z: 2.220446e-17}
+    groundNormals_lowgrade:
+    - {x: -0.000003822342, y: 1, z: 0}
     groundNormals_highgrade: []
-    groundTag: 
-    groundMaterial: {fileID: 0}
+    groundTag: Untagged
+    groundMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
     groundLayer: {fileID: 0}
     groundPhysicMaterial: {fileID: 0}
   enableStaminaSystem: 0
   jumpingDepletesStamina: 0
   Stamina: 50
-  currentStaminaLevel: 0
+  currentStaminaLevel: 50
   s_minimumStaminaToSprint: 5
   s_depletionSpeed: 2
   s_regenerationSpeed: 1.2
@@ -200,7 +202,7 @@ MonoBehaviour:
     hasLowHealth: 0
     isStarving: 0
     isDehydrated: 0
-  interactKey_L: 101
+  interactKey: 19
   interactRange: 4
   interactableLayer:
     serializedVersion: 2
@@ -285,13 +287,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f79f34d33e8fc74b9d1ccafadf3a9ae, type: 3}
---- !u!4 &5568621331741882869 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f79f34d33e8fc74b9d1ccafadf3a9ae, type: 3}
-  m_PrefabInstance: {fileID: 5389980708185726494}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &1992732112639157135 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 1f79f34d33e8fc74b9d1ccafadf3a9ae, type: 3}
+  m_PrefabInstance: {fileID: 5389980708185726494}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5568621331741882869 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f79f34d33e8fc74b9d1ccafadf3a9ae, type: 3}
   m_PrefabInstance: {fileID: 5389980708185726494}
   m_PrefabAsset: {fileID: 0}
