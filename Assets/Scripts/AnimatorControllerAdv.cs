@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using UnityEngine;
 
 public class AnimatorControllerAdv: NetworkBehaviour
@@ -95,5 +96,25 @@ public class AnimatorControllerAdv: NetworkBehaviour
     {
         if (isLocalPlayer) return;
         anim.SetFloat("MotionSpeed", animationBlend);
-    }    
+    }
+
+
+    internal void SetSlide(bool v)
+    {
+        if (isServer)
+        {
+            SetSlideToClients(v);
+        }
+        else if (isLocalPlayer)
+        {
+            anim.SetBool("Slide", v);
+        }
+    }
+
+    [ClientRpc]
+    internal void SetSlideToClients(bool v)
+    {
+        if (isLocalPlayer) return;
+        anim.SetBool("Slide", v);
+    }
 }

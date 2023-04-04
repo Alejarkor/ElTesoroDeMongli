@@ -36,7 +36,7 @@ public class PlayerNetwork : NetworkBehaviour
     bool networkPlayerInputAction;
     public bool isGrounded;
 
-    public CameraInput camInput;
+    //public CameraInput camInput;
     private string currentControlScheme;
 
     

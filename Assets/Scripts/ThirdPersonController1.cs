@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -42,6 +43,12 @@ namespace StarterAssets
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
         public float Gravity = -15.0f;
 
+        [Tooltip("slide force")]
+        public float frictionForce = 10f;
+
+        [Tooltip("slide force")]
+        public float slideForce = 30f;
+
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
         public float JumpTimeout = 0.50f;
@@ -52,6 +59,7 @@ namespace StarterAssets
         [Header("Player Grounded")]
         [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
         public bool Grounded = true;
+        public bool slide = false;
 
         [Tooltip("Useful for rough ground")]
         public float GroundedOffset = -0.14f;
@@ -69,10 +77,11 @@ namespace StarterAssets
         public float BottomClamp = -30.0f;        
 
         private Vector3 moveInput;
-        public Transform playerCamera;
+        //public Transform playerCamera;
 
         // player
         private float _speed;
+        private float targetSpeed;
         private float _animationBlend;
         [Range(0f,1f)]
         public float _rotationVelocity;
@@ -85,6 +94,8 @@ namespace StarterAssets
 
         private Vector3 targetLookAt;
         private Vector3 inputDirection;
+
+        public float maxInclineAngle = 35f;
 
         public CharacterController _controller;     
                
@@ -100,7 +111,8 @@ namespace StarterAssets
         {      
             JumpAndGravity(inputJump, deltaTime);
             GroundedCheck();
-            Move(inputMove, deltaTime);
+            Deslizamiento(deltaTime);
+            Move(inputMove, deltaTime);            
         }    
 
         private void GroundedCheck()
@@ -117,15 +129,26 @@ namespace StarterAssets
                  _animatorController.SetGrounded(Grounded);
             }
         }
+        
 
         private void Move(Vector2 inputVector, float deltaTime)
         {
-            
+            if (slide) return;
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = inputVector.magnitude * SprintSpeed;            
+            
+            float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+            
+            if (Grounded)
+            {
+                targetSpeed = inputVector.magnitude * SprintSpeed;
+            }
+            else 
+            {
+                targetSpeed = currentHorizontalSpeed-frictionForce*deltaTime;
+            }
 
             // a reference to the players current horizontal velocity
-            float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+            
 
             float speedOffset = 0.1f;
             float inputMagnitude = inputVector.magnitude;
@@ -158,16 +181,33 @@ namespace StarterAssets
             // if there is a move input rotate player when the player is moving
             if (inputVector != Vector2.zero)
             {
-                targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + inputDirection, _rotationVelocity);
+                if (Grounded)
+                {
+                    targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + inputDirection, _rotationVelocity);
+                    transform.LookAt(targetLookAt);
+                }
+                else 
+                {
+                    targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + inputDirection, _rotationVelocity/2f);
+                    transform.LookAt(targetLookAt);
+                }
+            }
+            else
+            {
+                Vector3 strightForward = transform.forward;
+                strightForward.y = 0;
+
+                targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + strightForward.normalized, _rotationVelocity / 2f);
                 transform.LookAt(targetLookAt);
             }
-
 
             //Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
             // move the player
+
             _controller.Move(inputDirection.normalized * (_speed * deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime);
+                            new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime);
+
 
             // update animator if using character
             if (_animatorController)
@@ -214,7 +254,7 @@ namespace StarterAssets
                 if (_jumpTimeoutDelta >= 0.0f)
                 {
                     _jumpTimeoutDelta -= deltaTime;
-                }
+                }               
             }
             else
             {
@@ -246,6 +286,42 @@ namespace StarterAssets
             }
         }
 
-        
+        private void Deslizamiento(float deltaTime) 
+        {
+            if (Grounded)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, Vector3.down, out hit, _controller.height / 2 + 0.1f))
+                {
+                    // Calcula el ángulo de la superficie con respecto a la vertical
+                    float inclineAngle = Vector3.Angle(hit.normal, Vector3.up);
+                   
+                    // Comprueba si el ángulo de inclinación supera el ángulo máximo
+                    if (inclineAngle > maxInclineAngle)
+                    {
+                        // Aplica la fuerza de deslizamiento basada en la normal de la superficie
+                        Vector3 slideRightDirection = Vector3.Cross(hit.normal, Vector3.up);
+                        Vector3 slideDirection = Vector3.Cross(hit.normal, slideRightDirection);
+                        _controller.Move(slideDirection.normalized * ((_controller.velocity.magnitude + slideForce )* deltaTime));
+                        _animatorController.SetSlide(true);
+                        targetLookAt = Vector3.Lerp(transform.position + transform.forward, transform.position + slideDirection, _rotationVelocity);
+                        transform.LookAt(targetLookAt);
+                        slide = true;
+                    }
+                    else
+                    {
+                        slide = false;
+                        _animatorController.SetSlide(false);
+                    }
+                }
+            }
+            else 
+            {
+                if (slide) 
+                {
+                    slide = false;
+                }
+            }
+        }
     }
 }
