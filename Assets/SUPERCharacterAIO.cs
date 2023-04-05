@@ -25,77 +25,78 @@ public class SUPERCharacterAIO : MonoBehaviour{
 
     public bool controllerPaused = false;
 
+    //ANULADO
     #region Camera Settings
-    [Header("Camera Settings")]
-    //
-    //Public
-    //
-    //Both
-    public Camera playerCamera;
-    public bool  enableCameraControl = true, lockAndHideMouse = true, autoGenerateCrosshair = true, showCrosshairIn3rdPerson = false, drawPrimitiveUI = false;
-    public Sprite crosshairSprite;
-    public PerspectiveModes cameraPerspective = PerspectiveModes._1stPerson;
-    //use mouse wheel to switch modes. (too close will set it to fps mode and attempting to zoom out from fps will switch to tps mode)
-    public bool automaticallySwitchPerspective = true;
-    #if ENABLE_INPUT_SYSTEM
-    public Key perspectiveSwitchingKey = Key.Q;
-    #else
+        [Header("Camera Settings")]
+        //
+        //Public
+        //
+        //Both
+        public Camera playerCamera;
+        public bool enableCameraControl = true, lockAndHideMouse = true, autoGenerateCrosshair = true, showCrosshairIn3rdPerson = false, drawPrimitiveUI = false;
+        public Sprite crosshairSprite;
+        public PerspectiveModes cameraPerspective = PerspectiveModes._1stPerson;
+        //use mouse wheel to switch modes. (too close will set it to fps mode and attempting to zoom out from fps will switch to tps mode)
+        public bool automaticallySwitchPerspective = true;
+#if ENABLE_INPUT_SYSTEM
+        public Key perspectiveSwitchingKey = Key.Q;
+#else
     public KeyCode perspectiveSwitchingKey_L = KeyCode.None;
-    #endif
+#endif
 
-    public MouseInputInversionModes mouseInputInversion;
-    public float Sensitivity = 8;
-    public float rotationWeight = 4;
-    public float verticalRotationRange = 170.0f;
-    public float standingEyeHeight = 0.8f;
-    public float crouchingEyeHeight = 0.25f;
+        public MouseInputInversionModes mouseInputInversion;
+        public float Sensitivity = 8;
+        public float rotationWeight = 4;
+        public float verticalRotationRange = 170.0f;
+        public float standingEyeHeight = 0.8f;
+        public float crouchingEyeHeight = 0.25f;
 
-    //First person
-    public ViewInputModes viewInputMethods;
-    public float FOVKickAmount = 10; 
-    public float FOVSensitivityMultiplier = 0.74f;
+        //First person
+        public ViewInputModes viewInputMethods;
+        public float FOVKickAmount = 10;
+        public float FOVSensitivityMultiplier = 0.74f;
 
-    //Third Person
-    public bool rotateCharacterToCameraForward = false;
-    public float maxCameraDistance = 8;
-    public LayerMask cameraObstructionIgnore = -1;
-    public float cameraZoomSensitivity = 5; 
-    public float bodyCatchupSpeed = 2.5f;
-    public float inputResponseFiltering = 2.5f;
+        //Third Person
+        public bool rotateCharacterToCameraForward = false;
+        public float maxCameraDistance = 8;
+        public LayerMask cameraObstructionIgnore = -1;
+        public float cameraZoomSensitivity = 5;
+        public float bodyCatchupSpeed = 2.5f;
+        public float inputResponseFiltering = 2.5f;
 
 
 
-    //
-    //Internal
-    //
-    
-    //Both
-    Vector2 MouseXY;
-    Vector2 viewRotVelRef;
-    bool isInFirstPerson, isInThirdPerson, perspecTog;
-    bool setInitialRot = true;
-    Vector3 initialRot;
-    Image crosshairImg;
-    Image stamMeter, stamMeterBG;
-    Image statsPanel, statsPanelBG;
-    Image HealthMeter, HydrationMeter, HungerMeter;
-    Vector2 normalMeterSizeDelta = new Vector2(175,12), normalStamMeterSizeDelta = new Vector2(330,5);
-    float internalEyeHeight;
+        //
+        //Internal
+        //
 
-    //First Person
-    float initialCameraFOV, FOVKickVelRef, currentFOVMod;
+        //Both
+        Vector2 MouseXY;
+        Vector2 viewRotVelRef;
+        bool isInFirstPerson, isInThirdPerson, perspecTog;
+        bool setInitialRot = true;
+        Vector3 initialRot;
+        Image crosshairImg;
+        Image stamMeter, stamMeterBG;
+        Image statsPanel, statsPanelBG;
+        Image HealthMeter, HydrationMeter, HungerMeter;
+        Vector2 normalMeterSizeDelta = new Vector2(175, 12), normalStamMeterSizeDelta = new Vector2(330, 5);
+        float internalEyeHeight;
 
-    //Third Person
-    float mouseScrollWheel, maxCameraDistInternal, currentCameraZ, cameraZRef;
-    Vector3 headPos, headRot, currentCameraPos, cameraPosVelRef;
-    Quaternion quatHeadRot;
-    Ray cameraObstCheck;
-    RaycastHit cameraObstResult;
-    [Space(20)]
-    #endregion
+        //First Person
+        float initialCameraFOV, FOVKickVelRef, currentFOVMod;
+
+        //Third Person
+        float mouseScrollWheel, maxCameraDistInternal, currentCameraZ, cameraZRef;
+        Vector3 headPos, headRot, currentCameraPos, cameraPosVelRef;
+        Quaternion quatHeadRot;
+        Ray cameraObstCheck;
+        RaycastHit cameraObstResult;
+        [Space(20)]
+        #endregion
 
     #region Movement
-    [Header("Movement Settings")]
+        [Header("Movement Settings")]
     
     //
     //Public
@@ -169,46 +170,48 @@ public class SUPERCharacterAIO : MonoBehaviour{
     [Space(20)]
     #endregion
     
+    //ANULADO
     #region Parkour
-            #if SAIO_ENABLE_PARKOUR
+    //        #if SAIO_ENABLE_PARKOUR
 
-    //
-    //Public
-    //
+    ////
+    ////Public
+    ////
 
-    //Vaulting
-    public bool canVault = true, isVaulting, autoVaultWhenSpringing;
-    #if ENABLE_INPUT_SYSTEM
-    public Key VaultKey = Key.E;
-    #else
-    public KeyCode VaultKey_L = KeyCode.E;
-    #endif
-    public string vaultObjectTag = "Vault Obj";
-    public float vaultSpeed = 7.5f, maxVaultDepth = 1.5f, maxVaultHeight = 0.75f;
+    ////Vaulting
+    //public bool canVault = true, isVaulting, autoVaultWhenSpringing;
+    //#if ENABLE_INPUT_SYSTEM
+    //public Key VaultKey = Key.E;
+    //#else
+    //public KeyCode VaultKey_L = KeyCode.E;
+    //#endif
+    //public string vaultObjectTag = "Vault Obj";
+    //public float vaultSpeed = 7.5f, maxVaultDepth = 1.5f, maxVaultHeight = 0.75f;
 
 
-    //
-    //Internal
-    //
+    ////
+    ////Internal
+    ////
 
-    //Vaulting
-    RaycastHit VC_Stage1, VC_Stage2, VC_Stage3, VC_Stage4;
-    Vector3 vaultForwardVec;
-    bool vaultInput;
+    ////Vaulting
+    //RaycastHit VC_Stage1, VC_Stage2, VC_Stage3, VC_Stage4;
+    //Vector3 vaultForwardVec;
+    //bool vaultInput;
 
-    //All
-    #endif
-    private bool doingPosInterp, doingCamInterp;
+    ////All
+    //#endif
+    //private bool doingPosInterp, doingCamInterp;
     #endregion
-
-    #region Stamina System
-    //Public
-    public bool enableStaminaSystem = true, jumpingDepletesStamina = true;
-    [Range(0.0f,250.0f)]public float Stamina = 50.0f, currentStaminaLevel = 0, s_minimumStaminaToSprint = 5.0f, s_depletionSpeed = 2.0f,  s_regenerationSpeed = 1.2f, s_JumpStaminaDepletion = 5.0f;
     
-    //Internal
-    bool staminaIsChanging;
-    bool ignoreStamina = false;
+    //ANULADO
+    #region Stamina System
+    ////Public
+    //public bool enableStaminaSystem = true, jumpingDepletesStamina = true;
+    //[Range(0.0f,250.0f)]public float Stamina = 50.0f, currentStaminaLevel = 0, s_minimumStaminaToSprint = 5.0f, s_depletionSpeed = 2.0f,  s_regenerationSpeed = 1.2f, s_JumpStaminaDepletion = 5.0f;
+    
+    ////Internal
+    //bool staminaIsChanging;
+    //bool ignoreStamina = false;
     #endregion
     
     #region Footstep System
@@ -224,36 +227,38 @@ public class SUPERCharacterAIO : MonoBehaviour{
     [Space(18)]
     #endregion
     
+    //ANULADO
     #region  Headbob
-    //
-    //Public
-    //
-    public bool enableHeadbob = true;
-    [Range(1.0f,5.0f)] public float headbobSpeed = 0.5f, headbobPower = 0.25f;
-    [Range(0.0f,3.0f)] public float ZTilt = 3;
+    ////
+    ////Public
+    ////
+    //public bool enableHeadbob = true;
+    //[Range(1.0f,5.0f)] public float headbobSpeed = 0.5f, headbobPower = 0.25f;
+    //[Range(0.0f,3.0f)] public float ZTilt = 3;
 
-    //
-    //Internal
-    //
-    bool shouldCalculateHeadbob;
-    Vector3 headbobCameraPosition;
-    float headbobCyclePosition, headbobWarmUp;
+    ////
+    ////Internal
+    ////
+    //bool shouldCalculateHeadbob;
+    //Vector3 headbobCameraPosition;
+    //float headbobCyclePosition, headbobWarmUp;
 
     #endregion
     
+    //ANULADO
     #region  Survival Stats
-    //
-    //Public
-    //
-    public bool enableSurvivalStats = true;
-    public SurvivalStats defaultSurvivalStats = new SurvivalStats();
-    public float statTickRate = 6.0f, hungerDepletionRate = 0.06f, hydrationDepletionRate = 0.14f;
-    public SurvivalStats currentSurvivalStats = new SurvivalStats();
+    ////
+    ////Public
+    ////
+    //public bool enableSurvivalStats = true;
+    //public SurvivalStats defaultSurvivalStats = new SurvivalStats();
+    //public float statTickRate = 6.0f, hungerDepletionRate = 0.06f, hydrationDepletionRate = 0.14f;
+    //public SurvivalStats currentSurvivalStats = new SurvivalStats();
 
-    //
-    //Internal
-    //
-    float StatTickTimer;
+    ////
+    ////Internal
+    ////
+    //float StatTickTimer;
     #endregion
 
     #region Interactable
@@ -296,99 +301,100 @@ public class SUPERCharacterAIO : MonoBehaviour{
     #endregion
     void Start(){
    
+        //ANULADO
         #region Camera
-        maxCameraDistInternal = maxCameraDistance;
-        initialCameraFOV = playerCamera.fieldOfView;
-        headbobCameraPosition = Vector3.up*standingEyeHeight;
-        internalEyeHeight = standingEyeHeight;
-        if(lockAndHideMouse){
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        //maxCameraDistInternal = maxCameraDistance;
+        //initialCameraFOV = playerCamera.fieldOfView;
+        //headbobCameraPosition = Vector3.up*standingEyeHeight;
+        //internalEyeHeight = standingEyeHeight;
+        //if(lockAndHideMouse){
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //    Cursor.visible = false;
+        //}
 
-        if(autoGenerateCrosshair || drawPrimitiveUI){
-                Canvas canvas = playerCamera.gameObject.GetComponentInChildren<Canvas>();
-                if(canvas == null){canvas = new GameObject("AutoCrosshair").AddComponent<Canvas>();}
-                canvas.gameObject.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.pixelPerfect = true;
-                canvas.transform.SetParent(playerCamera.transform);
-                canvas.transform.position = Vector3.zero;
-            if(autoGenerateCrosshair && crosshairSprite){
-                crosshairImg = new GameObject("Crosshair").AddComponent<Image>();
-                crosshairImg.sprite = crosshairSprite;
-                crosshairImg.rectTransform.sizeDelta = new Vector2(25,25);
-                crosshairImg.transform.SetParent(canvas.transform);
-                crosshairImg.transform.position = Vector3.zero;
-                crosshairImg.raycastTarget = false;
-            }
-            if(drawPrimitiveUI){
-                //Stam Meter BG
-                stamMeterBG = new GameObject("Stam BG").AddComponent<Image>();
-                stamMeterBG.rectTransform.sizeDelta = normalStamMeterSizeDelta;
-                stamMeterBG.transform.SetParent(canvas.transform);
-                stamMeterBG.rectTransform.anchorMin = new Vector2(0.5f,0);
-                stamMeterBG.rectTransform.anchorMax = new Vector2(0.5f,0);
-                stamMeterBG.rectTransform.anchoredPosition = new Vector2(0,22);
-                stamMeterBG.color = Color.gray;
-                stamMeterBG.gameObject.SetActive(enableStaminaSystem);
-                //Stam Meter
-                stamMeter = new GameObject("Stam Meter").AddComponent<Image>();
-                stamMeter.rectTransform.sizeDelta = normalStamMeterSizeDelta;
-                stamMeter.transform.SetParent(canvas.transform);
-                stamMeter.rectTransform.anchorMin = new Vector2(0.5f,0);
-                stamMeter.rectTransform.anchorMax = new Vector2(0.5f,0);
-                stamMeter.rectTransform.anchoredPosition = new Vector2(0,22);
-                stamMeter.color = Color.white;
-                stamMeter.gameObject.SetActive(enableStaminaSystem);
-                //Stats Panel
-                statsPanel = new GameObject("Stats Panel").AddComponent<Image>();
-                statsPanel.rectTransform.sizeDelta = new Vector2(3,45);
-                statsPanel.transform.SetParent(canvas.transform);
-                statsPanel.rectTransform.anchorMin = new Vector2(0,0);
-                statsPanel.rectTransform.anchorMax = new Vector2(0,0);
-                statsPanel.rectTransform.anchoredPosition = new Vector2(12,33);
-                statsPanel.color = Color.clear;
-                statsPanel.gameObject.SetActive(enableSurvivalStats);
-                //Stats Panel BG
-                statsPanelBG = new GameObject("Stats Panel BG").AddComponent<Image>();
-                statsPanelBG.rectTransform.sizeDelta = new Vector2(175,45);
-                statsPanelBG.transform.SetParent(statsPanel.transform);
-                statsPanelBG.rectTransform.anchorMin = new Vector2(0,0);
-                statsPanelBG.rectTransform.anchorMax = new Vector2(1,0);
-                statsPanelBG.rectTransform.anchoredPosition = new Vector2(87,22);
-                statsPanelBG.color = Color.white*0.5f;
-                //Health Meter
-                HealthMeter = new GameObject("Health Meter").AddComponent<Image>();
-                HealthMeter.rectTransform.sizeDelta = normalMeterSizeDelta;
-                HealthMeter.transform.SetParent(statsPanel.transform);
-                HealthMeter.rectTransform.anchorMin = new Vector2(0,0);
-                HealthMeter.rectTransform.anchorMax = new Vector2(1,0);
-                HealthMeter.rectTransform.anchoredPosition = new Vector2(87,6);
-                HealthMeter.color =new Color32(211,0,0, 255);
-                //Hydration Meter
-                HydrationMeter = new GameObject("Hydration Meter").AddComponent<Image>();
-                HydrationMeter.rectTransform.sizeDelta = normalMeterSizeDelta;
-                HydrationMeter.transform.SetParent(statsPanel.transform);
-                HydrationMeter.rectTransform.anchorMin = new Vector2(0,0);
-                HydrationMeter.rectTransform.anchorMax = new Vector2(1,0);
-                HydrationMeter.rectTransform.anchoredPosition = new Vector2(87,22);
-                HydrationMeter.color =new Color32(0,194,255, 255);
-                //Hunger Meter
-                HungerMeter = new GameObject("Hunger Meter").AddComponent<Image>();
-                HungerMeter.rectTransform.sizeDelta = normalMeterSizeDelta;
-                HungerMeter.transform.SetParent(statsPanel.transform);
-                HungerMeter.rectTransform.anchorMin = new Vector2(0,0);
-                HungerMeter.rectTransform.anchorMax = new Vector2(1,0);
-                HungerMeter.rectTransform.anchoredPosition = new Vector2(87,38);
-                HungerMeter.color = new Color32(142,54,0, 255);
+        //if(autoGenerateCrosshair || drawPrimitiveUI){
+        //        Canvas canvas = playerCamera.gameObject.GetComponentInChildren<Canvas>();
+        //        if(canvas == null){canvas = new GameObject("AutoCrosshair").AddComponent<Canvas>();}
+        //        canvas.gameObject.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        //        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        //        canvas.pixelPerfect = true;
+        //        canvas.transform.SetParent(playerCamera.transform);
+        //        canvas.transform.position = Vector3.zero;
+        //    if(autoGenerateCrosshair && crosshairSprite){
+        //        crosshairImg = new GameObject("Crosshair").AddComponent<Image>();
+        //        crosshairImg.sprite = crosshairSprite;
+        //        crosshairImg.rectTransform.sizeDelta = new Vector2(25,25);
+        //        crosshairImg.transform.SetParent(canvas.transform);
+        //        crosshairImg.transform.position = Vector3.zero;
+        //        crosshairImg.raycastTarget = false;
+        //    }
+        //    if(drawPrimitiveUI){
+        //        //Stam Meter BG
+        //        stamMeterBG = new GameObject("Stam BG").AddComponent<Image>();
+        //        stamMeterBG.rectTransform.sizeDelta = normalStamMeterSizeDelta;
+        //        stamMeterBG.transform.SetParent(canvas.transform);
+        //        stamMeterBG.rectTransform.anchorMin = new Vector2(0.5f,0);
+        //        stamMeterBG.rectTransform.anchorMax = new Vector2(0.5f,0);
+        //        stamMeterBG.rectTransform.anchoredPosition = new Vector2(0,22);
+        //        stamMeterBG.color = Color.gray;
+        //        stamMeterBG.gameObject.SetActive(enableStaminaSystem);
+        //        //Stam Meter
+        //        stamMeter = new GameObject("Stam Meter").AddComponent<Image>();
+        //        stamMeter.rectTransform.sizeDelta = normalStamMeterSizeDelta;
+        //        stamMeter.transform.SetParent(canvas.transform);
+        //        stamMeter.rectTransform.anchorMin = new Vector2(0.5f,0);
+        //        stamMeter.rectTransform.anchorMax = new Vector2(0.5f,0);
+        //        stamMeter.rectTransform.anchoredPosition = new Vector2(0,22);
+        //        stamMeter.color = Color.white;
+        //        stamMeter.gameObject.SetActive(enableStaminaSystem);
+        //        //Stats Panel
+        //        statsPanel = new GameObject("Stats Panel").AddComponent<Image>();
+        //        statsPanel.rectTransform.sizeDelta = new Vector2(3,45);
+        //        statsPanel.transform.SetParent(canvas.transform);
+        //        statsPanel.rectTransform.anchorMin = new Vector2(0,0);
+        //        statsPanel.rectTransform.anchorMax = new Vector2(0,0);
+        //        statsPanel.rectTransform.anchoredPosition = new Vector2(12,33);
+        //        statsPanel.color = Color.clear;
+        //        statsPanel.gameObject.SetActive(enableSurvivalStats);
+        //        //Stats Panel BG
+        //        statsPanelBG = new GameObject("Stats Panel BG").AddComponent<Image>();
+        //        statsPanelBG.rectTransform.sizeDelta = new Vector2(175,45);
+        //        statsPanelBG.transform.SetParent(statsPanel.transform);
+        //        statsPanelBG.rectTransform.anchorMin = new Vector2(0,0);
+        //        statsPanelBG.rectTransform.anchorMax = new Vector2(1,0);
+        //        statsPanelBG.rectTransform.anchoredPosition = new Vector2(87,22);
+        //        statsPanelBG.color = Color.white*0.5f;
+        //        //Health Meter
+        //        HealthMeter = new GameObject("Health Meter").AddComponent<Image>();
+        //        HealthMeter.rectTransform.sizeDelta = normalMeterSizeDelta;
+        //        HealthMeter.transform.SetParent(statsPanel.transform);
+        //        HealthMeter.rectTransform.anchorMin = new Vector2(0,0);
+        //        HealthMeter.rectTransform.anchorMax = new Vector2(1,0);
+        //        HealthMeter.rectTransform.anchoredPosition = new Vector2(87,6);
+        //        HealthMeter.color =new Color32(211,0,0, 255);
+        //        //Hydration Meter
+        //        HydrationMeter = new GameObject("Hydration Meter").AddComponent<Image>();
+        //        HydrationMeter.rectTransform.sizeDelta = normalMeterSizeDelta;
+        //        HydrationMeter.transform.SetParent(statsPanel.transform);
+        //        HydrationMeter.rectTransform.anchorMin = new Vector2(0,0);
+        //        HydrationMeter.rectTransform.anchorMax = new Vector2(1,0);
+        //        HydrationMeter.rectTransform.anchoredPosition = new Vector2(87,22);
+        //        HydrationMeter.color =new Color32(0,194,255, 255);
+        //        //Hunger Meter
+        //        HungerMeter = new GameObject("Hunger Meter").AddComponent<Image>();
+        //        HungerMeter.rectTransform.sizeDelta = normalMeterSizeDelta;
+        //        HungerMeter.transform.SetParent(statsPanel.transform);
+        //        HungerMeter.rectTransform.anchorMin = new Vector2(0,0);
+        //        HungerMeter.rectTransform.anchorMax = new Vector2(1,0);
+        //        HungerMeter.rectTransform.anchoredPosition = new Vector2(87,38);
+        //        HungerMeter.color = new Color32(142,54,0, 255);
                 
-            }
-        }
-        if(cameraPerspective == PerspectiveModes._3rdPerson && !showCrosshairIn3rdPerson){
-            crosshairImg?.gameObject.SetActive(false);
-        }
-        initialRot = transform.localEulerAngles;
+        //    }
+        //}
+        //if(cameraPerspective == PerspectiveModes._3rdPerson && !showCrosshairIn3rdPerson){
+        //    crosshairImg?.gameObject.SetActive(false);
+        //}
+        //initialRot = transform.localEulerAngles;
         #endregion 
 
         #region Movement
@@ -408,8 +414,9 @@ public class SUPERCharacterAIO : MonoBehaviour{
         _MaxFriction.bounceCombine = PhysicMaterialCombine.Average;
         #endregion
 
+        //ANULADO
         #region Stamina System
-        currentStaminaLevel = Stamina;
+        //currentStaminaLevel = Stamina;
         #endregion
         
         #region Footstep
@@ -418,78 +425,81 @@ public class SUPERCharacterAIO : MonoBehaviour{
         
     }
     void Update(){
-        if(!controllerPaused){          
+        if(!controllerPaused){
 
+        //ANULADO
         #region Camera
-                if (enableCameraControl){
-            switch (cameraPerspective){
-                case PerspectiveModes._1stPerson:{
-                    //This is called in FixedUpdate for the 3rd person mode
-                    //RotateView(MouseXY, Sensitivity, rotationWeight);
-                    if(!isInFirstPerson){ChangePerspective(PerspectiveModes._1stPerson);}
-                    if(perspecTog||(automaticallySwitchPerspective&&mouseScrollWheel<0)){ ChangePerspective(PerspectiveModes._3rdPerson); }
-                        HeadbobCycleCalculator();
-                    FOVKick();
-                }break;
+            //        if (enableCameraControl){
+            //    switch (cameraPerspective){
+            //        case PerspectiveModes._1stPerson:{
+            //            //This is called in FixedUpdate for the 3rd person mode
+            //            //RotateView(MouseXY, Sensitivity, rotationWeight);
+            //            if(!isInFirstPerson){ChangePerspective(PerspectiveModes._1stPerson);}
+            //            if(perspecTog||(automaticallySwitchPerspective&&mouseScrollWheel<0)){ ChangePerspective(PerspectiveModes._3rdPerson); }
+            //                HeadbobCycleCalculator();
+            //            FOVKick();
+            //        }break;
 
-                case PerspectiveModes._3rdPerson:{
-                  //  UpdateCameraPosition_3rdPerson();
-                    if(!isInThirdPerson){ChangePerspective(PerspectiveModes._3rdPerson);}
-                    if(perspecTog||(automaticallySwitchPerspective&&maxCameraDistInternal ==0 &&currentCameraZ == 0)){ChangePerspective(PerspectiveModes._1stPerson); }
-                    maxCameraDistInternal = Mathf.Clamp(maxCameraDistInternal - (mouseScrollWheel*(cameraZoomSensitivity*2)),automaticallySwitchPerspective ? 0 : (capsule.radius*2),maxCameraDistance);
-                }break;
-            }
+            //        case PerspectiveModes._3rdPerson:{
+            //          //  UpdateCameraPosition_3rdPerson();
+            //            if(!isInThirdPerson){ChangePerspective(PerspectiveModes._3rdPerson);}
+            //            if(perspecTog||(automaticallySwitchPerspective&&maxCameraDistInternal ==0 &&currentCameraZ == 0)){ChangePerspective(PerspectiveModes._1stPerson); }
+            //            maxCameraDistInternal = Mathf.Clamp(maxCameraDistInternal - (mouseScrollWheel*(cameraZoomSensitivity*2)),automaticallySwitchPerspective ? 0 : (capsule.radius*2),maxCameraDistance);
+            //        }break;
+            //    }
 
-            
-            if(setInitialRot){
-                setInitialRot = false;
-                RotateView(initialRot,false);
-                InputDir = transform.forward;
-            }
-        }
-        if(drawPrimitiveUI){
-            if(enableSurvivalStats){
-                if(!statsPanel.gameObject.activeSelf)statsPanel.gameObject.SetActive(true);
 
-                HealthMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*12,normalMeterSizeDelta, (currentSurvivalStats.Health/defaultSurvivalStats.Health));
-                HydrationMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*12,normalMeterSizeDelta, (currentSurvivalStats.Hydration/defaultSurvivalStats.Hydration));
-                HungerMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*12,normalMeterSizeDelta, (currentSurvivalStats.Hunger/defaultSurvivalStats.Hunger));
-            }else{
-                if(statsPanel.gameObject.activeSelf)statsPanel.gameObject.SetActive(false);
-               
-            }
-            if(enableStaminaSystem){
-                if(!stamMeterBG.gameObject.activeSelf)stamMeterBG.gameObject.SetActive(true);
-                if(!stamMeter.gameObject.activeSelf)stamMeter.gameObject.SetActive(true);
-                if(staminaIsChanging){
-                    if(stamMeter.color != Color.white){
-                        stamMeterBG.color = Vector4.MoveTowards(stamMeterBG.color, new Vector4(0,0,0,0.5f),0.15f);
-                        stamMeter.color = Vector4.MoveTowards(stamMeter.color, new Vector4(1,1,1,1),0.15f);
-                    }
-                    stamMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*5,normalStamMeterSizeDelta, (currentStaminaLevel/Stamina));
-                }else{
-                    if(stamMeter.color != Color.clear){
-                        stamMeterBG.color = Vector4.MoveTowards(stamMeterBG.color, new Vector4(0,0,0,0),0.15f);
-                        stamMeter.color = Vector4.MoveTowards(stamMeter.color, new Vector4(0,0,0,0),0.15f);
-                    }
-                }
-            }else{
-                if(stamMeterBG.gameObject.activeSelf)stamMeterBG.gameObject.SetActive(false);
-                if(stamMeter.gameObject.activeSelf)stamMeter.gameObject.SetActive(false);
-            }
-        }
-        
-        if(currentStance == Stances.Standing && !changingStances){
-            internalEyeHeight = standingEyeHeight;
-        }
-        #endregion
+            //    if(setInitialRot){
+            //        setInitialRot = false;
+            //        RotateView(initialRot,false);
+            //        InputDir = transform.forward;
+            //    }
+            //}
+            //if(drawPrimitiveUI){
+            //    if(enableSurvivalStats){
+            //        if(!statsPanel.gameObject.activeSelf)statsPanel.gameObject.SetActive(true);
+
+            //        HealthMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*12,normalMeterSizeDelta, (currentSurvivalStats.Health/defaultSurvivalStats.Health));
+            //        HydrationMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*12,normalMeterSizeDelta, (currentSurvivalStats.Hydration/defaultSurvivalStats.Hydration));
+            //        HungerMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*12,normalMeterSizeDelta, (currentSurvivalStats.Hunger/defaultSurvivalStats.Hunger));
+            //    }else{
+            //        if(statsPanel.gameObject.activeSelf)statsPanel.gameObject.SetActive(false);
+
+            //    }
+            //    if(enableStaminaSystem){
+            //        if(!stamMeterBG.gameObject.activeSelf)stamMeterBG.gameObject.SetActive(true);
+            //        if(!stamMeter.gameObject.activeSelf)stamMeter.gameObject.SetActive(true);
+            //        if(staminaIsChanging){
+            //            if(stamMeter.color != Color.white){
+            //                stamMeterBG.color = Vector4.MoveTowards(stamMeterBG.color, new Vector4(0,0,0,0.5f),0.15f);
+            //                stamMeter.color = Vector4.MoveTowards(stamMeter.color, new Vector4(1,1,1,1),0.15f);
+            //            }
+            //            stamMeter.rectTransform.sizeDelta = Vector2.Lerp(Vector2.up*5,normalStamMeterSizeDelta, (currentStaminaLevel/Stamina));
+            //        }else{
+            //            if(stamMeter.color != Color.clear){
+            //                stamMeterBG.color = Vector4.MoveTowards(stamMeterBG.color, new Vector4(0,0,0,0),0.15f);
+            //                stamMeter.color = Vector4.MoveTowards(stamMeter.color, new Vector4(0,0,0,0),0.15f);
+            //            }
+            //        }
+            //    }else{
+            //        if(stamMeterBG.gameObject.activeSelf)stamMeterBG.gameObject.SetActive(false);
+            //        if(stamMeter.gameObject.activeSelf)stamMeter.gameObject.SetActive(false);
+            //    }
+            //}
+
+            //if(currentStance == Stances.Standing && !changingStances){
+            //    internalEyeHeight = standingEyeHeight;
+            //}
+            #endregion
 
         #region Movement
-        if(cameraPerspective == PerspectiveModes._3rdPerson){
-            HeadRotDirForInput = Mathf.MoveTowardsAngle(HeadRotDirForInput,headRot.y, bodyCatchupSpeed*(1+Time.deltaTime));
-            MovInput_Smoothed = Vector2.MoveTowards(MovInput_Smoothed, MovInput, inputResponseFiltering*(1+Time.deltaTime));
-        }
-        InputDir = cameraPerspective == PerspectiveModes._1stPerson?  Vector3.ClampMagnitude((transform.forward*MovInput.y+transform.right * (viewInputMethods == ViewInputModes.Traditional ? MovInput.x : 0)),1) : Quaternion.AngleAxis(HeadRotDirForInput,Vector3.up) * (Vector3.ClampMagnitude((Vector3.forward*MovInput_Smoothed.y+Vector3.right * MovInput_Smoothed.x),1));
+        #region Anulado, habria que actrivarlo si no funciona
+            //if(cameraPerspective == PerspectiveModes._3rdPerson){
+            //    HeadRotDirForInput = Mathf.MoveTowardsAngle(HeadRotDirForInput,headRot.y, bodyCatchupSpeed*(1+Time.deltaTime));
+            //    MovInput_Smoothed = Vector2.MoveTowards(MovInput_Smoothed, MovInput, inputResponseFiltering*(1+Time.deltaTime));
+            //}
+            //InputDir = cameraPerspective == PerspectiveModes._1stPerson?  Vector3.ClampMagnitude((transform.forward*MovInput.y+transform.right * (viewInputMethods == ViewInputModes.Traditional ? MovInput.x : 0)),1) : Quaternion.AngleAxis(HeadRotDirForInput,Vector3.up) * (Vector3.ClampMagnitude((Vector3.forward*MovInput_Smoothed.y+Vector3.right * MovInput_Smoothed.x),1));
+            #endregion
         GroundMovementSpeedUpdate();
         if(canJump && (holdJump? jumpInput_Momentary : jumpInput_FrameOf)){Jump(jumpPower);}
         #endregion
@@ -499,15 +509,16 @@ public class SUPERCharacterAIO : MonoBehaviour{
         //if(enableStaminaSystem){CalculateStamina();}
         #endregion
 
+        //ANULADO
         #region Footstep
-        CalculateFootstepTriggers();
+        //CalculateFootstepTriggers();
         #endregion
 
         //ANULADO
         #region Survival Stats
-        if(enableSurvivalStats && Time.time > StatTickTimer){
-            TickStats();
-        }
+        //if(enableSurvivalStats && Time.time > StatTickTimer){
+        //    TickStats();
+        //}
         #endregion
 
         #region Interaction
@@ -535,14 +546,20 @@ public class SUPERCharacterAIO : MonoBehaviour{
             }
             #endregion
 
+            //ANULADO
             #region Camera
-            RotateView(MouseXY, Sensitivity, rotationWeight);
-             if(cameraPerspective == PerspectiveModes._3rdPerson){
-                UpdateBodyRotation_3rdPerson();
-                UpdateCameraPosition_3rdPerson();
-            }
+            //RotateView(MouseXY, Sensitivity, rotationWeight);
+            // if(cameraPerspective == PerspectiveModes._3rdPerson){
+            //    UpdateBodyRotation_3rdPerson();
+            //    UpdateCameraPosition_3rdPerson();
+            //}
   
             #endregion
+
+            if(cameraPerspective == PerspectiveModes._3rdPerson){
+                UpdateBodyRotation_3rdPerson();
+            //    UpdateCameraPosition_3rdPerson();
+            }
         }
     }
     private void OnTriggerEnter(Collider other){
@@ -571,6 +588,7 @@ public class SUPERCharacterAIO : MonoBehaviour{
                 slideInput_FrameOf = slideDown;
 
                 MovInput = moveInput;
+                InputDir = new Vector3( moveInput.x, 0f, moveInput.y);
             }
             else
             {
@@ -580,232 +598,244 @@ public class SUPERCharacterAIO : MonoBehaviour{
         }
         #endregion
 
-    #region Camera Functions
-        void RotateView(Vector2 yawPitchInput, float inputSensitivity, float cameraWeight){
-        
-        switch (viewInputMethods){
-            
-            case ViewInputModes.Traditional:{  
-                yawPitchInput.x *= ((mouseInputInversion==MouseInputInversionModes.X||mouseInputInversion == MouseInputInversionModes.Both) ? 1 : -1);
-                yawPitchInput.y *= ((mouseInputInversion==MouseInputInversionModes.Y||mouseInputInversion == MouseInputInversionModes.Both) ? -1 : 1);
-                float maxDelta = Mathf.Min(5, (26-cameraWeight))*360;
-                switch(cameraPerspective){
-                    case PerspectiveModes._1stPerson:{
-                        Vector2 targetAngles = ((Vector2.right*playerCamera.transform.localEulerAngles.x)+(Vector2.up*p_Rigidbody.rotation.eulerAngles.y));
-                        float fovMod = FOVSensitivityMultiplier>0 && playerCamera.fieldOfView <= initialCameraFOV ? ((initialCameraFOV - playerCamera.fieldOfView)*(FOVSensitivityMultiplier/10))+1 : 1;
-                        targetAngles = Vector2.SmoothDamp(targetAngles, targetAngles+(yawPitchInput*(((inputSensitivity*5)/fovMod))), ref viewRotVelRef,(Mathf.Pow(cameraWeight*fovMod,2))*Time.fixedDeltaTime, maxDelta, Time.fixedDeltaTime);
-                        
-                        targetAngles.x += targetAngles.x>180 ? -360 : targetAngles.x<-180 ? 360 :0;
-                        targetAngles.x = Mathf.Clamp(targetAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                        playerCamera.transform.localEulerAngles = (Vector3.right * targetAngles.x) + (Vector3.forward* (enableHeadbob? headbobCameraPosition.z : 0));
-                        p_Rigidbody.MoveRotation(Quaternion.Euler(Vector3.up*targetAngles.y));
-                        
-                        //p_Rigidbody.rotation = ;
-                        //transform.localEulerAngles = (Vector3.up*targetAngles.y);
-                    }break;
+        //ANULADO
+        #region Camera Functions
+        //void RotateView(Vector2 yawPitchInput, float inputSensitivity, float cameraWeight){
 
-                    case PerspectiveModes._3rdPerson:{
-                        
-                        headPos = transform.position + Vector3.up *standingEyeHeight;
-                        quatHeadRot = Quaternion.Euler(headRot);
-                        headRot = Vector3.SmoothDamp(headRot,headRot+((Vector3)yawPitchInput*(inputSensitivity*5)),ref cameraPosVelRef ,(Mathf.Pow(cameraWeight,2))*Time.fixedDeltaTime, maxDelta, Time.fixedDeltaTime);
-                        headRot.y += headRot.y>180 ? -360 : headRot.y<-180 ? 360 :0;
-                        headRot.x += headRot.x>180 ? -360 : headRot.x<-180 ? 360 :0;
-                        headRot.x = Mathf.Clamp(headRot.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                        
-                       
-                    }break;
-                        
-                }
-            
-            }break;
-            
-            case ViewInputModes.Retro:{
-                yawPitchInput = Vector2.up * (Input.GetAxis("Horizontal") * ((mouseInputInversion==MouseInputInversionModes.Y||mouseInputInversion == MouseInputInversionModes.Both) ? -1 : 1));
-                Vector2 targetAngles = ((Vector2.right*playerCamera.transform.localEulerAngles.x)+(Vector2.up*transform.localEulerAngles.y));
-                float fovMod = FOVSensitivityMultiplier>0 && playerCamera.fieldOfView <= initialCameraFOV ? ((initialCameraFOV - playerCamera.fieldOfView)*(FOVSensitivityMultiplier/10))+1 : 1;
-                targetAngles = targetAngles+(yawPitchInput*((inputSensitivity/fovMod)));   
-                targetAngles.x = 0;
-                playerCamera.transform.localEulerAngles = (Vector3.right * targetAngles.x) + (Vector3.forward* (enableHeadbob? headbobCameraPosition.z : 0));
-                transform.localEulerAngles = (Vector3.up*targetAngles.y);
-            }break;
-        }
-        
-    }
-    public void RotateView(Vector3 AbsoluteEulerAngles, bool SmoothRotation){
+        //    switch (viewInputMethods){
 
-        switch (cameraPerspective){
+        //        case ViewInputModes.Traditional:{  
+        //            yawPitchInput.x *= ((mouseInputInversion==MouseInputInversionModes.X||mouseInputInversion == MouseInputInversionModes.Both) ? 1 : -1);
+        //            yawPitchInput.y *= ((mouseInputInversion==MouseInputInversionModes.Y||mouseInputInversion == MouseInputInversionModes.Both) ? -1 : 1);
+        //            float maxDelta = Mathf.Min(5, (26-cameraWeight))*360;
+        //            switch(cameraPerspective){
+        //                case PerspectiveModes._1stPerson:{
+        //                    Vector2 targetAngles = ((Vector2.right*playerCamera.transform.localEulerAngles.x)+(Vector2.up*p_Rigidbody.rotation.eulerAngles.y));
+        //                    float fovMod = FOVSensitivityMultiplier>0 && playerCamera.fieldOfView <= initialCameraFOV ? ((initialCameraFOV - playerCamera.fieldOfView)*(FOVSensitivityMultiplier/10))+1 : 1;
+        //                    targetAngles = Vector2.SmoothDamp(targetAngles, targetAngles+(yawPitchInput*(((inputSensitivity*5)/fovMod))), ref viewRotVelRef,(Mathf.Pow(cameraWeight*fovMod,2))*Time.fixedDeltaTime, maxDelta, Time.fixedDeltaTime);
 
-            case (PerspectiveModes._1stPerson):{
-                AbsoluteEulerAngles.x += AbsoluteEulerAngles.x>180 ? -360 : AbsoluteEulerAngles.x<-180 ? 360 :0;
-                AbsoluteEulerAngles.x = Mathf.Clamp(AbsoluteEulerAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                
+        //                    targetAngles.x += targetAngles.x>180 ? -360 : targetAngles.x<-180 ? 360 :0;
+        //                    targetAngles.x = Mathf.Clamp(targetAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
 
-                if(SmoothRotation){
-                    IEnumerator SmoothRot(){
-                        doingCamInterp = true;
-                        Vector3 refVec = Vector3.zero, targetAngles = (Vector3.right * playerCamera.transform.localEulerAngles.x)+Vector3.up*transform.eulerAngles.y;
-                        while(Vector3.Distance(targetAngles, AbsoluteEulerAngles)>0.1f){ 
-                            targetAngles = Vector3.SmoothDamp(targetAngles, AbsoluteEulerAngles, ref refVec, 25*Time.deltaTime);
-                            targetAngles.x += targetAngles.x>180 ? -360 : targetAngles.x<-180 ? 360 :0;
-                            targetAngles.x = Mathf.Clamp(targetAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                            playerCamera.transform.localEulerAngles = Vector3.right * targetAngles.x;
-                            transform.eulerAngles = Vector3.up*targetAngles.y;
-                            yield return null;
-                        }
-                        doingCamInterp =false;
-                    }   
-                    StopCoroutine("SmoothRot");
-                    StartCoroutine(SmoothRot());
-                }else{
-                    playerCamera.transform.eulerAngles = Vector3.right * AbsoluteEulerAngles.x;
-                    transform.eulerAngles = (Vector3.up*AbsoluteEulerAngles.y)+(Vector3.forward*AbsoluteEulerAngles.z);
-                }
-            }break;
+        //                    //ANULADO EL TROZO DE LINEA DE ABAJO
+        //                    playerCamera.transform.localEulerAngles = (Vector3.right * targetAngles.x) /*+ (Vector3.forward* (enableHeadbob? headbobCameraPosition.z : 0))*/;
+        //                    p_Rigidbody.MoveRotation(Quaternion.Euler(Vector3.up*targetAngles.y));
 
-            case (PerspectiveModes._3rdPerson):{
-                if(SmoothRotation){
-                    AbsoluteEulerAngles.y += AbsoluteEulerAngles.y>180 ? -360 : AbsoluteEulerAngles.y<-180 ? 360 :0;
-                    AbsoluteEulerAngles.x += AbsoluteEulerAngles.x>180 ? -360 : AbsoluteEulerAngles.x<-180 ? 360 :0;
-                    AbsoluteEulerAngles.x = Mathf.Clamp(AbsoluteEulerAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                    IEnumerator SmoothRot(){
-                        doingCamInterp = true;
-                        Vector3 refVec = Vector3.zero;
-                        while(Vector3.Distance(headRot, AbsoluteEulerAngles)>0.1f){
-                            headPos = p_Rigidbody.position + Vector3.up *standingEyeHeight;
-                            quatHeadRot = Quaternion.Euler(headRot);
-                            headRot = Vector3.SmoothDamp(headRot,AbsoluteEulerAngles,ref refVec ,25*Time.deltaTime);
-                            headRot.y += headRot.y>180 ? -360 : headRot.y<-180 ? 360 :0;
-                            headRot.x += headRot.x>180 ? -360 : headRot.x<-180 ? 360 :0;
-                            headRot.x = Mathf.Clamp(headRot.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                            yield return null;
-                        }
-                        doingCamInterp = false;
-                    }
-                    StopCoroutine("SmoothRot");
-                    StartCoroutine(SmoothRot());
-                }
-                else{
-                    headRot = AbsoluteEulerAngles;
-                    headRot.y += headRot.y>180 ? -360 : headRot.y<-180 ? 360 :0;
-                    headRot.x += headRot.x>180 ? -360 : headRot.x<-180 ? 360 :0;
-                    headRot.x = Mathf.Clamp(headRot.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
-                    quatHeadRot = Quaternion.Euler(headRot);
-                    if(doingCamInterp){}
-                }
-            }break;
-        }
-    }
-    public void ChangePerspective(PerspectiveModes newPerspective = PerspectiveModes._1stPerson){
-        switch(newPerspective){
-            case PerspectiveModes._1stPerson:{
-                StopCoroutine("SmoothRot");
-                isInThirdPerson = false;
-                isInFirstPerson = true;
-                transform.eulerAngles = Vector3.up* headRot.y;
-                playerCamera.transform.localPosition = Vector3.up*standingEyeHeight;
-                playerCamera.transform.localEulerAngles = (Vector2)playerCamera.transform.localEulerAngles;
-                cameraPerspective = newPerspective;
-                if(_3rdPersonCharacterAnimator){
-                    _3rdPersonCharacterAnimator.gameObject.SetActive(false);
-                }
-                if(_1stPersonCharacterAnimator){
-                    _1stPersonCharacterAnimator.gameObject.SetActive(true);
-                }
-                if(crosshairImg && autoGenerateCrosshair){
-                    crosshairImg.gameObject.SetActive(true);
-                }
-            }break;
+        //                    //p_Rigidbody.rotation = ;
+        //                    //transform.localEulerAngles = (Vector3.up*targetAngles.y);
+        //                }break;
 
-            case PerspectiveModes._3rdPerson:{
-                StopCoroutine("SmoothRot");
-                isInThirdPerson = true;
-                isInFirstPerson = false;
-                playerCamera.fieldOfView = initialCameraFOV;
-                maxCameraDistInternal = maxCameraDistInternal == 0 ? capsule.radius*2 : maxCameraDistInternal;
-                currentCameraZ = -(maxCameraDistInternal*0.85f);
-                playerCamera.transform.localEulerAngles = (Vector2)playerCamera.transform.localEulerAngles;
-                headRot.y = transform.eulerAngles.y;
-                headRot.x = playerCamera.transform.eulerAngles.x;
-                cameraPerspective = newPerspective;
-                if(_3rdPersonCharacterAnimator){
-                    _3rdPersonCharacterAnimator.gameObject.SetActive(true);
-                }
-                if(_1stPersonCharacterAnimator){
-                    _1stPersonCharacterAnimator.gameObject.SetActive(false);
-                }
-                if(crosshairImg && autoGenerateCrosshair){
-                    if(!showCrosshairIn3rdPerson){
-                        crosshairImg.gameObject.SetActive(false);
-                    }else{
-                        crosshairImg.gameObject.SetActive(true);
-                    }
-                }
-            }break;
-        }
-    }
-    void FOVKick(){
-        if(cameraPerspective == PerspectiveModes._1stPerson && FOVKickAmount>0){
-            currentFOVMod = (!isIdle && isSprinting) ? initialCameraFOV+(FOVKickAmount*((sprintingSpeed/walkingSpeed)-1)) : initialCameraFOV;
-            if(!Mathf.Approximately(playerCamera.fieldOfView, currentFOVMod) && playerCamera.fieldOfView >= initialCameraFOV){
-                playerCamera.fieldOfView = Mathf.SmoothDamp(playerCamera.fieldOfView, currentFOVMod,ref FOVKickVelRef, Time.deltaTime,50);
+        //                case PerspectiveModes._3rdPerson:{
+
+        //                    headPos = transform.position + Vector3.up *standingEyeHeight;
+        //                    quatHeadRot = Quaternion.Euler(headRot);
+        //                    headRot = Vector3.SmoothDamp(headRot,headRot+((Vector3)yawPitchInput*(inputSensitivity*5)),ref cameraPosVelRef ,(Mathf.Pow(cameraWeight,2))*Time.fixedDeltaTime, maxDelta, Time.fixedDeltaTime);
+        //                    headRot.y += headRot.y>180 ? -360 : headRot.y<-180 ? 360 :0;
+        //                    headRot.x += headRot.x>180 ? -360 : headRot.x<-180 ? 360 :0;
+        //                    headRot.x = Mathf.Clamp(headRot.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
+
+
+        //                }break;
+
+        //            }
+
+        //        }break;
+
+        //        case ViewInputModes.Retro:{
+        //            yawPitchInput = Vector2.up * (Input.GetAxis("Horizontal") * ((mouseInputInversion==MouseInputInversionModes.Y||mouseInputInversion == MouseInputInversionModes.Both) ? -1 : 1));
+        //            Vector2 targetAngles = ((Vector2.right*playerCamera.transform.localEulerAngles.x)+(Vector2.up*transform.localEulerAngles.y));
+        //            float fovMod = FOVSensitivityMultiplier>0 && playerCamera.fieldOfView <= initialCameraFOV ? ((initialCameraFOV - playerCamera.fieldOfView)*(FOVSensitivityMultiplier/10))+1 : 1;
+        //            targetAngles = targetAngles+(yawPitchInput*((inputSensitivity/fovMod)));   
+        //            targetAngles.x = 0;
+
+
+        //            //ANULADISIMO: TROZO DE LINEA DE ABAJO
+        //            playerCamera.transform.localEulerAngles = (Vector3.right * targetAngles.x) /*+ (Vector3.forward* (enableHeadbob? headbobCameraPosition.z : 0))*/;
+        //            transform.localEulerAngles = (Vector3.up*targetAngles.y);
+        //        }break;
+        //    }
+
+        //}
+        //public void RotateView(Vector3 AbsoluteEulerAngles, bool SmoothRotation){
+
+        //    switch (cameraPerspective){
+
+        //        case (PerspectiveModes._1stPerson):{
+        //            AbsoluteEulerAngles.x += AbsoluteEulerAngles.x>180 ? -360 : AbsoluteEulerAngles.x<-180 ? 360 :0;
+        //            AbsoluteEulerAngles.x = Mathf.Clamp(AbsoluteEulerAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
+
+
+        //            if(SmoothRotation){
+        //                IEnumerator SmoothRot(){
+        //                    doingCamInterp = true;
+        //                    Vector3 refVec = Vector3.zero, targetAngles = (Vector3.right * playerCamera.transform.localEulerAngles.x)+Vector3.up*transform.eulerAngles.y;
+        //                    while(Vector3.Distance(targetAngles, AbsoluteEulerAngles)>0.1f){ 
+        //                        targetAngles = Vector3.SmoothDamp(targetAngles, AbsoluteEulerAngles, ref refVec, 25*Time.deltaTime);
+        //                        targetAngles.x += targetAngles.x>180 ? -360 : targetAngles.x<-180 ? 360 :0;
+        //                        targetAngles.x = Mathf.Clamp(targetAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
+        //                        playerCamera.transform.localEulerAngles = Vector3.right * targetAngles.x;
+        //                        transform.eulerAngles = Vector3.up*targetAngles.y;
+        //                        yield return null;
+        //                    }
+        //                    doingCamInterp =false;
+        //                }   
+        //                StopCoroutine("SmoothRot");
+        //                StartCoroutine(SmoothRot());
+        //            }else{
+        //                playerCamera.transform.eulerAngles = Vector3.right * AbsoluteEulerAngles.x;
+        //                transform.eulerAngles = (Vector3.up*AbsoluteEulerAngles.y)+(Vector3.forward*AbsoluteEulerAngles.z);
+        //            }
+        //        }break;
+
+        //        case (PerspectiveModes._3rdPerson):{
+        //            if(SmoothRotation){
+        //                AbsoluteEulerAngles.y += AbsoluteEulerAngles.y>180 ? -360 : AbsoluteEulerAngles.y<-180 ? 360 :0;
+        //                AbsoluteEulerAngles.x += AbsoluteEulerAngles.x>180 ? -360 : AbsoluteEulerAngles.x<-180 ? 360 :0;
+        //                AbsoluteEulerAngles.x = Mathf.Clamp(AbsoluteEulerAngles.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
+        //                IEnumerator SmoothRot(){
+        //                    doingCamInterp = true;
+        //                    Vector3 refVec = Vector3.zero;
+        //                    while(Vector3.Distance(headRot, AbsoluteEulerAngles)>0.1f){
+        //                        headPos = p_Rigidbody.position + Vector3.up *standingEyeHeight;
+        //                        quatHeadRot = Quaternion.Euler(headRot);
+        //                        headRot = Vector3.SmoothDamp(headRot,AbsoluteEulerAngles,ref refVec ,25*Time.deltaTime);
+        //                        headRot.y += headRot.y>180 ? -360 : headRot.y<-180 ? 360 :0;
+        //                        headRot.x += headRot.x>180 ? -360 : headRot.x<-180 ? 360 :0;
+        //                        headRot.x = Mathf.Clamp(headRot.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
+        //                        yield return null;
+        //                    }
+        //                    doingCamInterp = false;
+        //                }
+        //                StopCoroutine("SmoothRot");
+        //                StartCoroutine(SmoothRot());
+        //            }
+        //            else{
+        //                headRot = AbsoluteEulerAngles;
+        //                headRot.y += headRot.y>180 ? -360 : headRot.y<-180 ? 360 :0;
+        //                headRot.x += headRot.x>180 ? -360 : headRot.x<-180 ? 360 :0;
+        //                headRot.x = Mathf.Clamp(headRot.x,-0.5f*verticalRotationRange,0.5f*verticalRotationRange);
+        //                quatHeadRot = Quaternion.Euler(headRot);
+        //                if(doingCamInterp){}
+        //            }
+        //        }break;
+        //    }
+        //}
+        //public void ChangePerspective(PerspectiveModes newPerspective = PerspectiveModes._1stPerson){
+        //    switch(newPerspective){
+        //        case PerspectiveModes._1stPerson:{
+        //            StopCoroutine("SmoothRot");
+        //            isInThirdPerson = false;
+        //            isInFirstPerson = true;
+        //            transform.eulerAngles = Vector3.up* headRot.y;
+        //            playerCamera.transform.localPosition = Vector3.up*standingEyeHeight;
+        //            playerCamera.transform.localEulerAngles = (Vector2)playerCamera.transform.localEulerAngles;
+        //            cameraPerspective = newPerspective;
+        //            if(_3rdPersonCharacterAnimator){
+        //                _3rdPersonCharacterAnimator.gameObject.SetActive(false);
+        //            }
+        //            if(_1stPersonCharacterAnimator){
+        //                _1stPersonCharacterAnimator.gameObject.SetActive(true);
+        //            }
+        //            if(crosshairImg && autoGenerateCrosshair){
+        //                crosshairImg.gameObject.SetActive(true);
+        //            }
+        //        }break;
+
+        //        case PerspectiveModes._3rdPerson:{
+        //            StopCoroutine("SmoothRot");
+        //            isInThirdPerson = true;
+        //            isInFirstPerson = false;
+        //            playerCamera.fieldOfView = initialCameraFOV;
+        //            maxCameraDistInternal = maxCameraDistInternal == 0 ? capsule.radius*2 : maxCameraDistInternal;
+        //            currentCameraZ = -(maxCameraDistInternal*0.85f);
+        //            playerCamera.transform.localEulerAngles = (Vector2)playerCamera.transform.localEulerAngles;
+        //            headRot.y = transform.eulerAngles.y;
+        //            headRot.x = playerCamera.transform.eulerAngles.x;
+        //            cameraPerspective = newPerspective;
+        //            if(_3rdPersonCharacterAnimator){
+        //                _3rdPersonCharacterAnimator.gameObject.SetActive(true);
+        //            }
+        //            if(_1stPersonCharacterAnimator){
+        //                _1stPersonCharacterAnimator.gameObject.SetActive(false);
+        //            }
+        //            if(crosshairImg && autoGenerateCrosshair){
+        //                if(!showCrosshairIn3rdPerson){
+        //                    crosshairImg.gameObject.SetActive(false);
+        //                }else{
+        //                    crosshairImg.gameObject.SetActive(true);
+        //                }
+        //            }
+        //        }break;
+        //    }
+        //}
+        //void FOVKick(){
+        //    if(cameraPerspective == PerspectiveModes._1stPerson && FOVKickAmount>0){
+        //        currentFOVMod = (!isIdle && isSprinting) ? initialCameraFOV+(FOVKickAmount*((sprintingSpeed/walkingSpeed)-1)) : initialCameraFOV;
+        //        if(!Mathf.Approximately(playerCamera.fieldOfView, currentFOVMod) && playerCamera.fieldOfView >= initialCameraFOV){
+        //            playerCamera.fieldOfView = Mathf.SmoothDamp(playerCamera.fieldOfView, currentFOVMod,ref FOVKickVelRef, Time.deltaTime,50);
+        //        }
+        //    }
+        //}
+        //void HeadbobCycleCalculator(){
+        //    if(enableHeadbob){
+        //        if(!isIdle && currentGroundInfo.isGettingGroundInfo && !isSliding){
+        //            headbobWarmUp = Mathf.MoveTowards(headbobWarmUp, 1,Time.deltaTime*5);
+        //            headbobCyclePosition += (_2DVelocity.magnitude)*(Time.deltaTime * (headbobSpeed/10));
+
+        //            headbobCameraPosition.x = (((Mathf.Sin(Mathf.PI * (2*headbobCyclePosition + 0.5f)))*(headbobPower/50)))*headbobWarmUp;
+        //            headbobCameraPosition.y = ((Mathf.Abs((((Mathf.Sin(Mathf.PI * (2*headbobCyclePosition)))*0.75f))*(headbobPower/50)))*headbobWarmUp )+internalEyeHeight;
+        //            headbobCameraPosition.z = ((Mathf.Sin(Mathf.PI * (2*headbobCyclePosition))) * (ZTilt/3))*headbobWarmUp;
+        //        }else{
+        //            headbobCameraPosition = Vector3.MoveTowards(headbobCameraPosition,Vector3.up*internalEyeHeight,Time.deltaTime/(headbobPower*0.3f ));
+        //            headbobWarmUp = 0.1f;
+        //        }
+        //        playerCamera.transform.localPosition = (Vector2)headbobCameraPosition;
+        //        if(StepCycle>(headbobCyclePosition*3)){StepCycle = headbobCyclePosition+0.5f;}
+        //    }
+        //}
+        //void UpdateCameraPosition_3rdPerson(){
+
+        //    //Camera Obstacle Check
+        //    cameraObstCheck= new Ray(headPos+(quatHeadRot*(Vector3.forward*capsule.radius)), quatHeadRot*-Vector3.forward); 
+        //    if(Physics.SphereCast(cameraObstCheck, 0.5f, out cameraObstResult,maxCameraDistInternal, cameraObstructionIgnore,QueryTriggerInteraction.Ignore)){
+        //        currentCameraZ = -(Vector3.Distance(headPos,cameraObstResult.point)*0.9f);
+
+        //    }else{
+        //        currentCameraZ = Mathf.SmoothDamp(currentCameraZ, -(maxCameraDistInternal*0.85f), ref cameraZRef ,Time.deltaTime,10,Time.fixedDeltaTime);
+        //    }
+
+        //    //Debugging
+        //    if(enableMouseAndCameraDebugging){
+        //        Debug.Log(headRot);
+        //        Debug.DrawRay(cameraObstCheck.origin,cameraObstCheck.direction*maxCameraDistance,Color.red);
+        //        Debug.DrawRay(cameraObstCheck.origin,cameraObstCheck.direction*-currentCameraZ,Color.green);
+        //    }   
+        //    currentCameraPos = headPos + (quatHeadRot *( Vector3.forward * currentCameraZ));
+        //        playerCamera.transform.position = currentCameraPos;
+        //    playerCamera.transform.rotation = quatHeadRot;
+        //}
+
+        void UpdateBodyRotation_3rdPerson()
+        {
+            //if is moving, rotate capsule to match camera forward   //change button down to bool of isFiring or isTargeting
+            if (!isIdle && !isSliding/* && currentGroundInfo.isGettingGroundInfo*/)
+            {
+                transform.rotation = (Quaternion.Euler(0, Mathf.MoveTowardsAngle(p_Rigidbody.rotation.eulerAngles.y, (Mathf.Atan2(InputDir.x, InputDir.z) * Mathf.Rad2Deg), 20), 0));
+                //transform.rotation = Quaternion.Euler(0,Mathf.MoveTowardsAngle(transform.eulerAngles.y,(Mathf.Atan2(InputDir.x,InputDir.z)*Mathf.Rad2Deg),2.5f), 0);
+            }
+            else if (isSliding)
+            {
+                transform.localRotation = (Quaternion.Euler(Vector3.up * Mathf.MoveTowardsAngle(p_Rigidbody.rotation.eulerAngles.y, (Mathf.Atan2(p_Rigidbody.velocity.x, p_Rigidbody.velocity.z) * Mathf.Rad2Deg), 10)));
+            }
+            else if (!currentGroundInfo.isGettingGroundInfo && rotateCharacterToCameraForward)
+            {
+                transform.localRotation = (Quaternion.Euler(Vector3.up * Mathf.MoveTowardsAngle(p_Rigidbody.rotation.eulerAngles.y, headRot.y, 10)));
             }
         }
-    }
-    void HeadbobCycleCalculator(){
-        if(enableHeadbob){
-            if(!isIdle && currentGroundInfo.isGettingGroundInfo && !isSliding){
-                headbobWarmUp = Mathf.MoveTowards(headbobWarmUp, 1,Time.deltaTime*5);
-                headbobCyclePosition += (_2DVelocity.magnitude)*(Time.deltaTime * (headbobSpeed/10));
+        #endregion
 
-                headbobCameraPosition.x = (((Mathf.Sin(Mathf.PI * (2*headbobCyclePosition + 0.5f)))*(headbobPower/50)))*headbobWarmUp;
-                headbobCameraPosition.y = ((Mathf.Abs((((Mathf.Sin(Mathf.PI * (2*headbobCyclePosition)))*0.75f))*(headbobPower/50)))*headbobWarmUp )+internalEyeHeight;
-                headbobCameraPosition.z = ((Mathf.Sin(Mathf.PI * (2*headbobCyclePosition))) * (ZTilt/3))*headbobWarmUp;
-            }else{
-                headbobCameraPosition = Vector3.MoveTowards(headbobCameraPosition,Vector3.up*internalEyeHeight,Time.deltaTime/(headbobPower*0.3f ));
-                headbobWarmUp = 0.1f;
-            }
-            playerCamera.transform.localPosition = (Vector2)headbobCameraPosition;
-            if(StepCycle>(headbobCyclePosition*3)){StepCycle = headbobCyclePosition+0.5f;}
-        }
-    }
-    void UpdateCameraPosition_3rdPerson(){
-
-        //Camera Obstacle Check
-        cameraObstCheck= new Ray(headPos+(quatHeadRot*(Vector3.forward*capsule.radius)), quatHeadRot*-Vector3.forward); 
-        if(Physics.SphereCast(cameraObstCheck, 0.5f, out cameraObstResult,maxCameraDistInternal, cameraObstructionIgnore,QueryTriggerInteraction.Ignore)){
-            currentCameraZ = -(Vector3.Distance(headPos,cameraObstResult.point)*0.9f);
-
-        }else{
-            currentCameraZ = Mathf.SmoothDamp(currentCameraZ, -(maxCameraDistInternal*0.85f), ref cameraZRef ,Time.deltaTime,10,Time.fixedDeltaTime);
-        }
-
-        //Debugging
-        if(enableMouseAndCameraDebugging){
-            Debug.Log(headRot);
-            Debug.DrawRay(cameraObstCheck.origin,cameraObstCheck.direction*maxCameraDistance,Color.red);
-            Debug.DrawRay(cameraObstCheck.origin,cameraObstCheck.direction*-currentCameraZ,Color.green);
-        }   
-        currentCameraPos = headPos + (quatHeadRot *( Vector3.forward * currentCameraZ));
-            playerCamera.transform.position = currentCameraPos;
-        playerCamera.transform.rotation = quatHeadRot;
-    }
-
-    void UpdateBodyRotation_3rdPerson(){
-         //if is moving, rotate capsule to match camera forward   //change button down to bool of isFiring or isTargeting
-        if(!isIdle && !isSliding/* && currentGroundInfo.isGettingGroundInfo*/){
-            transform.rotation = (Quaternion.Euler(0,Mathf.MoveTowardsAngle(p_Rigidbody.rotation.eulerAngles.y,(Mathf.Atan2(InputDir.x,InputDir.z)*Mathf.Rad2Deg),20), 0));
-            //transform.rotation = Quaternion.Euler(0,Mathf.MoveTowardsAngle(transform.eulerAngles.y,(Mathf.Atan2(InputDir.x,InputDir.z)*Mathf.Rad2Deg),2.5f), 0);
-        }else if(isSliding){
-            transform.localRotation = (Quaternion.Euler(Vector3.up*Mathf.MoveTowardsAngle(p_Rigidbody.rotation.eulerAngles.y,(Mathf.Atan2(p_Rigidbody.velocity.x,p_Rigidbody.velocity.z)*Mathf.Rad2Deg),10)));
-        }else if(!currentGroundInfo.isGettingGroundInfo && rotateCharacterToCameraForward){
-            transform.localRotation = (Quaternion.Euler(Vector3.up*Mathf.MoveTowardsAngle(p_Rigidbody.rotation.eulerAngles.y, headRot.y,10)));
-        }
-    }
-    #endregion
-
-    #region Movement Functions
-    void MovePlayer(Vector3 Direction, float Speed){
+        #region Movement Functions
+        void MovePlayer(Vector3 Direction, float Speed){
        // GroundInfo gI = GetGroundInfo();
         isIdle = Direction.normalized.magnitude <=0;
         _2DVelocity = Vector2.right * p_Rigidbody.velocity.x + Vector2.up * p_Rigidbody.velocity.z;
@@ -814,7 +844,8 @@ public class SUPERCharacterAIO : MonoBehaviour{
     
 
         //Movement
-        if((currentGroundInfo.isGettingGroundInfo) && !Jumped && !isSliding && !doingPosInterp)
+        //ANULADISIMO: EL TROZO DE LINEA DE ABAJO
+        if((currentGroundInfo.isGettingGroundInfo) && !Jumped && !isSliding/* && !doingPosInterp*/)
         {
             //Deceleration
             if(Direction.magnitude==0&& p_Rigidbody.velocity.normalized.magnitude>0.1f){
@@ -849,16 +880,21 @@ public class SUPERCharacterAIO : MonoBehaviour{
     void Jump(float Force){
         if((currentGroundInfo.isInContactWithGround) && 
             (currentGroundInfo.groundAngle<hardSlopeLimit) && 
-            ((enableStaminaSystem && jumpingDepletesStamina)? currentStaminaLevel>s_JumpStaminaDepletion*1.2f : true) && 
+
+            //ANULADISIMO: ESTA LINEA SE HA ANULADO
+            //((enableStaminaSystem && jumpingDepletesStamina)? currentStaminaLevel>s_JumpStaminaDepletion*1.2f : true) && 
             (Time.time>(jumpBlankingPeriod+0.1f)) &&
             (currentStance == Stances.Standing && !Jumped)){
 
                 Jumped = true;
                 p_Rigidbody.velocity =(Vector3.right * p_Rigidbody.velocity.x) + (Vector3.forward * p_Rigidbody.velocity.z);
                 p_Rigidbody.AddForce(Vector3.up*(Force/10),ForceMode.Impulse);
-                if(enableStaminaSystem && jumpingDepletesStamina){
-                    InstantStaminaReduction(s_JumpStaminaDepletion);
-                }
+
+                //ANULADISIMO: ESTAS LINEAS DE ABAJO
+                //if (enableStaminaSystem && jumpingDepletesStamina)
+                //{
+                //    InstantStaminaReduction(s_JumpStaminaDepletion);
+                //}
                 capsule.sharedMaterial  = _ZeroFriction;
                 jumpBlankingPeriod = Time.time;
         }
@@ -870,9 +906,9 @@ public class SUPERCharacterAIO : MonoBehaviour{
                 Jumped = true;
                 p_Rigidbody.velocity =(Vector3.right * p_Rigidbody.velocity.x) + (Vector3.forward * p_Rigidbody.velocity.z);
                 p_Rigidbody.AddForce(Vector3.up*(Force/10),ForceMode.Impulse);
-                if(enableStaminaSystem && jumpingDepletesStamina){
-                    InstantStaminaReduction(s_JumpStaminaDepletion);
-                }
+                //if(enableStaminaSystem && jumpingDepletesStamina){
+                //    InstantStaminaReduction(s_JumpStaminaDepletion);
+                //}
                 capsule.sharedMaterial  = _ZeroFriction;
                 jumpBlankingPeriod = Time.time;
         }
@@ -1055,7 +1091,7 @@ public class SUPERCharacterAIO : MonoBehaviour{
                         StopCoroutine("ApplyStance");
                         StartCoroutine(ApplyStance(stanceTransitionSpeed,Stances.Crouching));
                         break;
-                    }else if((canSprint&&sprintInput_FrameOf && ((enableStaminaSystem && jumpingDepletesStamina)? currentStaminaLevel>s_minimumStaminaToSprint : true) && (enableSurvivalStats ? (!currentSurvivalStats.isDehydrated && !currentSurvivalStats.isStarving) : true))||sprintOverride){
+                    }else if((canSprint&& sprintInput_FrameOf /*&& ((enableStaminaSystem && jumpingDepletesStamina)? currentStaminaLevel>s_minimumStaminaToSprint : true) && (enableSurvivalStats ? (!currentSurvivalStats.isDehydrated && !currentSurvivalStats.isStarving) : true)*/) ||sprintOverride){
                         isCrouching = false;
                         isSprinting = true;
                         currentGroundSpeed = MovInput.magnitude * walkingSpeed;
@@ -1085,7 +1121,7 @@ public class SUPERCharacterAIO : MonoBehaviour{
                         StopCoroutine("ApplyStance");
                         StartCoroutine(ApplyStance(stanceTransitionSpeed,Stances.Standing));
                         break;
-                    }else if(((canSprint && sprintInput_FrameOf && ((enableStaminaSystem && jumpingDepletesStamina)? currentStaminaLevel>s_minimumStaminaToSprint : true)&&(enableSurvivalStats ? (!currentSurvivalStats.isDehydrated && !currentSurvivalStats.isStarving) : true))||sprintOverride) && OverheadCheck()){
+                    }else if(((canSprint && sprintInput_FrameOf/* && ((enableStaminaSystem && jumpingDepletesStamina)? currentStaminaLevel>s_minimumStaminaToSprint : true)&&(enableSurvivalStats ? (!currentSurvivalStats.isDehydrated && !currentSurvivalStats.isStarving) : true)*/) || sprintOverride) && OverheadCheck()){
                         isCrouching = false;
                         isSprinting = true;
                         currentGroundSpeed = MovInput.magnitude * walkingSpeed;
@@ -1174,85 +1210,87 @@ public class SUPERCharacterAIO : MonoBehaviour{
     
     #endregion
 
+    //ANULADO
     #region Stamina System
-    private void CalculateStamina(){
-        if(isSprinting && !ignoreStamina && !isIdle){
-            if(currentStaminaLevel!=0){
-                currentStaminaLevel = Mathf.MoveTowards(currentStaminaLevel, 0, s_depletionSpeed*Time.deltaTime);
-            }else if(!isSliding){ currentGroundMovementSpeed = GroundSpeedProfiles.Walking;}
-            staminaIsChanging = true;
-        }
-        else if(currentStaminaLevel != Stamina && !ignoreStamina && (enableSurvivalStats ? (!currentSurvivalStats.isDehydrated && !currentSurvivalStats.isStarving) : true)){
-            currentStaminaLevel = Mathf.MoveTowards(currentStaminaLevel, Stamina, s_regenerationSpeed*Time.deltaTime);
-            staminaIsChanging = true;
-        }else{
-            staminaIsChanging =false;
-        }
-    }
-    public void InstantStaminaReduction(float Reduction){
-        if(!ignoreStamina && enableStaminaSystem){currentStaminaLevel = Mathf.Clamp(currentStaminaLevel-=Reduction, 0, Stamina);}
-    }
+    //private void CalculateStamina(){
+    //    if(isSprinting && !ignoreStamina && !isIdle){
+    //        if(currentStaminaLevel!=0){
+    //            currentStaminaLevel = Mathf.MoveTowards(currentStaminaLevel, 0, s_depletionSpeed*Time.deltaTime);
+    //        }else if(!isSliding){ currentGroundMovementSpeed = GroundSpeedProfiles.Walking;}
+    //        staminaIsChanging = true;
+    //    }
+    //    else if(currentStaminaLevel != Stamina && !ignoreStamina && (enableSurvivalStats ? (!currentSurvivalStats.isDehydrated && !currentSurvivalStats.isStarving) : true)){
+    //        currentStaminaLevel = Mathf.MoveTowards(currentStaminaLevel, Stamina, s_regenerationSpeed*Time.deltaTime);
+    //        staminaIsChanging = true;
+    //    }else{
+    //        staminaIsChanging =false;
+    //    }
+    //}
+    //public void InstantStaminaReduction(float Reduction){
+    //    if(!ignoreStamina && enableStaminaSystem){currentStaminaLevel = Mathf.Clamp(currentStaminaLevel-=Reduction, 0, Stamina);}
+    //}
     #endregion
 
+    //ANULADO
     #region Footstep System
-    void CalculateFootstepTriggers(){
-        if(enableFootstepSounds&& footstepTriggeringMode == FootstepTriggeringMode.calculatedTiming && shouldCalculateFootstepTriggers){
-            if(_2DVelocity.magnitude>(currentGroundSpeed/100)&& !isIdle){
-                if(cameraPerspective == PerspectiveModes._1stPerson){
-                    if((enableHeadbob ? headbobCyclePosition : Time.time) > StepCycle && currentGroundInfo.isGettingGroundInfo && !isSliding){
-                        //print("Steped");
-                        CallFootstepClip();
-                        StepCycle = enableHeadbob ? (headbobCyclePosition+0.5f) : (Time.time+((stepTiming*_2DVelocityMag)*2));
-                    }
-                }else{
-                    if(Time.time > StepCycle && currentGroundInfo.isGettingGroundInfo && !isSliding){
-                        //print("Steped");
-                        CallFootstepClip();
-                        StepCycle = (Time.time+((stepTiming*_2DVelocityMag)*2));
-                    }
-                }
-            }
-        }
-    }
-    public void CallFootstepClip(){
-        if(playerAudioSource){
-            if(enableFootstepSounds && footstepSoundSet.Any()){
-                for(int i = 0; i< footstepSoundSet.Count(); i++){
+    //void CalculateFootstepTriggers(){
+    //    if(enableFootstepSounds&& footstepTriggeringMode == FootstepTriggeringMode.calculatedTiming && shouldCalculateFootstepTriggers){
+    //        if(_2DVelocity.magnitude>(currentGroundSpeed/100)&& !isIdle){
+    //            if(cameraPerspective == PerspectiveModes._1stPerson){
+    //                if((enableHeadbob ? headbobCyclePosition : Time.time) > StepCycle && currentGroundInfo.isGettingGroundInfo && !isSliding){
+    //                    //print("Steped");
+    //                    CallFootstepClip();
+    //                    StepCycle = enableHeadbob ? (headbobCyclePosition+0.5f) : (Time.time+((stepTiming*_2DVelocityMag)*2));
+    //                }
+    //            }else{
+    //                if(Time.time > StepCycle && currentGroundInfo.isGettingGroundInfo && !isSliding){
+    //                    //print("Steped");
+    //                    CallFootstepClip();
+    //                    StepCycle = (Time.time+((stepTiming*_2DVelocityMag)*2));
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //public void CallFootstepClip(){
+    //    if(playerAudioSource){
+    //        if(enableFootstepSounds && footstepSoundSet.Any()){
+    //            for(int i = 0; i< footstepSoundSet.Count(); i++){
                 
-                    if(footstepSoundSet[i].profileTriggerType == MatProfileType.Material){
-                        if(footstepSoundSet[i]._Materials.Contains(currentGroundInfo.groundMaterial)){
-                            currentClipSet = footstepSoundSet[i].footstepClips;
-                            break;
-                        }else if(i == footstepSoundSet.Count-1){
-                            currentClipSet = null;  
-                        }
-                    }
+    //                if(footstepSoundSet[i].profileTriggerType == MatProfileType.Material){
+    //                    if(footstepSoundSet[i]._Materials.Contains(currentGroundInfo.groundMaterial)){
+    //                        currentClipSet = footstepSoundSet[i].footstepClips;
+    //                        break;
+    //                    }else if(i == footstepSoundSet.Count-1){
+    //                        currentClipSet = null;  
+    //                    }
+    //                }
 
-                    else if(footstepSoundSet[i].profileTriggerType == MatProfileType.physicMaterial){
-                        if(footstepSoundSet[i]._physicMaterials.Contains(currentGroundInfo.groundPhysicMaterial)){
-                            currentClipSet = footstepSoundSet[i].footstepClips;
-                            break;
-                        }else if(i == footstepSoundSet.Count-1){
-                            currentClipSet = null;  
-                        }
-                    }
+    //                else if(footstepSoundSet[i].profileTriggerType == MatProfileType.physicMaterial){
+    //                    if(footstepSoundSet[i]._physicMaterials.Contains(currentGroundInfo.groundPhysicMaterial)){
+    //                        currentClipSet = footstepSoundSet[i].footstepClips;
+    //                        break;
+    //                    }else if(i == footstepSoundSet.Count-1){
+    //                        currentClipSet = null;  
+    //                    }
+    //                }
 
-                    else if(footstepSoundSet[i].profileTriggerType == MatProfileType.terrainLayer){
-                        if(footstepSoundSet[i]._Layers.Contains(currentGroundInfo.groundLayer)){
-                            currentClipSet = footstepSoundSet[i].footstepClips;
-                            break;
-                        }else if(i == footstepSoundSet.Count-1){
-                            currentClipSet = null;  
-                        }
-                    }
-                }
+    //                else if(footstepSoundSet[i].profileTriggerType == MatProfileType.terrainLayer){
+    //                    if(footstepSoundSet[i]._Layers.Contains(currentGroundInfo.groundLayer)){
+    //                        currentClipSet = footstepSoundSet[i].footstepClips;
+    //                        break;
+    //                    }else if(i == footstepSoundSet.Count-1){
+    //                        currentClipSet = null;  
+    //                    }
+    //                }
+    //            }
                 
-                if(currentClipSet!=null && currentClipSet.Any()){
-                    playerAudioSource.PlayOneShot(currentClipSet[Random.Range(0,currentClipSet.Count())]);
-                }
-            }
-        }
-    }
+    //            if(currentClipSet!=null && currentClipSet.Any()){
+    //                playerAudioSource.PlayOneShot(currentClipSet[Random.Range(0,currentClipSet.Count())]);
+    //            }
+    //        }
+    //    }
+    //}
     #endregion
     
     #region Parkour Functions
@@ -1309,62 +1347,63 @@ public class SUPERCharacterAIO : MonoBehaviour{
     }
     #endif
     #endregion
-
+    
+    //ANULADO
     #region Survival Stat Functions
-    public void TickStats(){
-        if(currentSurvivalStats.Hunger>0){
-            currentSurvivalStats.Hunger = Mathf.Clamp(currentSurvivalStats.Hunger-(hungerDepletionRate+(isSprinting&&!isIdle ? 0.1f:0)), 0, defaultSurvivalStats.Hunger);
-            currentSurvivalStats.isStarving = (currentSurvivalStats.Hunger<(defaultSurvivalStats.Hunger/10));
-        }
-        if(currentSurvivalStats.Hydration>0){
-            currentSurvivalStats.Hydration = Mathf.Clamp(currentSurvivalStats.Hydration-(hydrationDepletionRate+(isSprinting&&!isIdle ? 0.1f:0)), 0, defaultSurvivalStats.Hydration);
-            currentSurvivalStats.isDehydrated = (currentSurvivalStats.Hydration<(defaultSurvivalStats.Hydration/8));
-        }
-        currentSurvivalStats.hasLowHealth = (currentSurvivalStats.Health<(defaultSurvivalStats.Health/10));
+    //public void TickStats(){
+    //    if(currentSurvivalStats.Hunger>0){
+    //        currentSurvivalStats.Hunger = Mathf.Clamp(currentSurvivalStats.Hunger-(hungerDepletionRate+(isSprinting&&!isIdle ? 0.1f:0)), 0, defaultSurvivalStats.Hunger);
+    //        currentSurvivalStats.isStarving = (currentSurvivalStats.Hunger<(defaultSurvivalStats.Hunger/10));
+    //    }
+    //    if(currentSurvivalStats.Hydration>0){
+    //        currentSurvivalStats.Hydration = Mathf.Clamp(currentSurvivalStats.Hydration-(hydrationDepletionRate+(isSprinting&&!isIdle ? 0.1f:0)), 0, defaultSurvivalStats.Hydration);
+    //        currentSurvivalStats.isDehydrated = (currentSurvivalStats.Hydration<(defaultSurvivalStats.Hydration/8));
+    //    }
+    //    currentSurvivalStats.hasLowHealth = (currentSurvivalStats.Health<(defaultSurvivalStats.Health/10));
 
-        StatTickTimer = Time.time + (60/statTickRate);
-    }
-    public void ImmediateStateChange(float Amount, StatSelector Stat = StatSelector.Health){
-        switch (Stat){
-            case StatSelector.Health:{
-                currentSurvivalStats.Health = Mathf.Clamp(currentSurvivalStats.Health+Amount,0,defaultSurvivalStats.Health);
-                currentSurvivalStats.hasLowHealth = (currentSurvivalStats.Health<(defaultSurvivalStats.Health/10));
+    //    StatTickTimer = Time.time + (60/statTickRate);
+    //}
+    //public void ImmediateStateChange(float Amount, StatSelector Stat = StatSelector.Health){
+    //    switch (Stat){
+    //        case StatSelector.Health:{
+    //            currentSurvivalStats.Health = Mathf.Clamp(currentSurvivalStats.Health+Amount,0,defaultSurvivalStats.Health);
+    //            currentSurvivalStats.hasLowHealth = (currentSurvivalStats.Health<(defaultSurvivalStats.Health/10));
 
-            }break;
+    //        }break;
 
-            case StatSelector.Hunger:{
-                currentSurvivalStats.Hunger = Mathf.Clamp(currentSurvivalStats.Hunger+Amount,0,defaultSurvivalStats.Hunger);
-                currentSurvivalStats.isStarving = (currentSurvivalStats.Hunger<(defaultSurvivalStats.Hunger/10));
-            }break;
+    //        case StatSelector.Hunger:{
+    //            currentSurvivalStats.Hunger = Mathf.Clamp(currentSurvivalStats.Hunger+Amount,0,defaultSurvivalStats.Hunger);
+    //            currentSurvivalStats.isStarving = (currentSurvivalStats.Hunger<(defaultSurvivalStats.Hunger/10));
+    //        }break;
 
-            case StatSelector.Hydration:{
-                currentSurvivalStats.Hydration = Mathf.Clamp(currentSurvivalStats.Hydration+Amount,0,defaultSurvivalStats.Hydration);
-                currentSurvivalStats.isDehydrated = (currentSurvivalStats.Hydration<(defaultSurvivalStats.Hydration/8));
-            }break;
-        }
-    }
-    public void LevelUpStat(float newMaxStatLevel, StatSelector Stat = StatSelector.Health, bool Refill = true){
-        switch(Stat){
-            case StatSelector.Health:{
-                defaultSurvivalStats.Health = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);;
-                if(Refill){currentSurvivalStats.Health = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);}
-                currentSurvivalStats.hasLowHealth = (currentSurvivalStats.Health<(defaultSurvivalStats.Health/10));
+    //        case StatSelector.Hydration:{
+    //            currentSurvivalStats.Hydration = Mathf.Clamp(currentSurvivalStats.Hydration+Amount,0,defaultSurvivalStats.Hydration);
+    //            currentSurvivalStats.isDehydrated = (currentSurvivalStats.Hydration<(defaultSurvivalStats.Hydration/8));
+    //        }break;
+    //    }
+    //}
+    //public void LevelUpStat(float newMaxStatLevel, StatSelector Stat = StatSelector.Health, bool Refill = true){
+    //    switch(Stat){
+    //        case StatSelector.Health:{
+    //            defaultSurvivalStats.Health = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);;
+    //            if(Refill){currentSurvivalStats.Health = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);}
+    //            currentSurvivalStats.hasLowHealth = (currentSurvivalStats.Health<(defaultSurvivalStats.Health/10));
 
-            }break;
-            case StatSelector.Hunger:{
-                defaultSurvivalStats.Hunger = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);;
-                if(Refill){currentSurvivalStats.Hunger = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);}
-                currentSurvivalStats.isStarving = (currentSurvivalStats.Hunger<(defaultSurvivalStats.Hunger/10));
+    //        }break;
+    //        case StatSelector.Hunger:{
+    //            defaultSurvivalStats.Hunger = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);;
+    //            if(Refill){currentSurvivalStats.Hunger = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);}
+    //            currentSurvivalStats.isStarving = (currentSurvivalStats.Hunger<(defaultSurvivalStats.Hunger/10));
 
-            }break;
-            case StatSelector.Hydration:{
-                defaultSurvivalStats.Hydration = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);;
-                if(Refill){currentSurvivalStats.Hydration = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);}
-                currentSurvivalStats.isDehydrated = (currentSurvivalStats.Hydration<(defaultSurvivalStats.Hydration/8));
+    //        }break;
+    //        case StatSelector.Hydration:{
+    //            defaultSurvivalStats.Hydration = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);;
+    //            if(Refill){currentSurvivalStats.Hydration = Mathf.Clamp(newMaxStatLevel,0,newMaxStatLevel);}
+    //            currentSurvivalStats.isDehydrated = (currentSurvivalStats.Hydration<(defaultSurvivalStats.Hydration/8));
 
-            }break;
-        }
-    }
+    //        }break;
+    //    }
+    //}
     
     #endregion
 
@@ -1814,9 +1853,11 @@ public class SuperFPEditor : Editor{
             t.holdJump = EditorGUILayout.ToggleLeft(new GUIContent("Continuous Jumping", "Should the player be able to continue jumping without letting go of the Jump key"),t.holdJump);
             t.jumpPower = EditorGUILayout.Slider(new GUIContent("Jump Power", "How much power should a jump have?"),t.jumpPower,1,650f);
             t.airControlFactor = EditorGUILayout.Slider(new GUIContent("Air Control Factor", "EXPERIMENTAL: How much control should the player have over their direction while in the air"),t.airControlFactor,0,1);
-            GUI.enabled = t.enableStaminaSystem;
-                t.jumpingDepletesStamina = EditorGUILayout.ToggleLeft(new GUIContent("Jumping Depletes Stamina", "Should jumping deplete stamina?"),t.jumpingDepletesStamina);
-                t.s_JumpStaminaDepletion = EditorGUILayout.Slider(new GUIContent("Jump Stamina Depletion Amount", "How much stamina should jumping use?"),t.s_JumpStaminaDepletion, 0, t.Stamina);
+                
+                //ANULADO
+            //GUI.enabled = t.enableStaminaSystem;
+            //    t.jumpingDepletesStamina = EditorGUILayout.ToggleLeft(new GUIContent("Jumping Depletes Stamina", "Should jumping deplete stamina?"),t.jumpingDepletesStamina);
+            //    t.s_JumpStaminaDepletion = EditorGUILayout.Slider(new GUIContent("Jump Stamina Depletion Amount", "How much stamina should jumping use?"),t.s_JumpStaminaDepletion, 0, t.Stamina);
             GUI.enabled = true;
             t.jumpEnhancements = EditorGUILayout.ToggleLeft(new GUIContent("Enable Jump Enhancements","Should extra math be used to enhance the jump curve?"), t.jumpEnhancements);
             if(t.jumpEnhancements){
@@ -1896,22 +1937,24 @@ public class SuperFPEditor : Editor{
         GUILayout.Label("Stamina",labelHeaderStyle,GUILayout.ExpandWidth(true));
         EditorGUILayout.Space();
         EditorGUILayout.BeginVertical(BoxPanel);
-        t.enableStaminaSystem = EditorGUILayout.ToggleLeft(new GUIContent("Enable Stamina System", "Should the controller enable it's stamina system?"),t.enableStaminaSystem);
 
-        //preview bar
-        Rect    casingRectSP = EditorGUILayout.GetControlRect(), 
-                statRectSP = new Rect(casingRectSP.x+2, casingRectSP.y+2, Mathf.Clamp(((casingRectSP.width/t.Stamina)*t.currentStaminaLevel)-4,0,casingRectSP.width), casingRectSP.height-4),
-                statRectMSP = new Rect(casingRectSP.x+2, casingRectSP.y+2, Mathf.Clamp(((casingRectSP.width/t.Stamina)*t.s_minimumStaminaToSprint)-4,0,casingRectSP.width), casingRectSP.height-4);
-        EditorGUI.DrawRect(casingRectSP,statBackingColor);
-        EditorGUI.DrawRect(statRectMSP,new Color32(96,96,64,255));
-        EditorGUI.DrawRect(statRectSP,new Color32(94,118,135,(byte)(GUI.enabled? 191:64)));
+            //ANULADO
+        //t.enableStaminaSystem = EditorGUILayout.ToggleLeft(new GUIContent("Enable Stamina System", "Should the controller enable it's stamina system?"),t.enableStaminaSystem);
+
+        ////preview bar
+        //Rect    casingRectSP = EditorGUILayout.GetControlRect(), 
+        //        statRectSP = new Rect(casingRectSP.x+2, casingRectSP.y+2, Mathf.Clamp(((casingRectSP.width/t.Stamina)*t.currentStaminaLevel)-4,0,casingRectSP.width), casingRectSP.height-4),
+        //        statRectMSP = new Rect(casingRectSP.x+2, casingRectSP.y+2, Mathf.Clamp(((casingRectSP.width/t.Stamina)*t.s_minimumStaminaToSprint)-4,0,casingRectSP.width), casingRectSP.height-4);
+        //EditorGUI.DrawRect(casingRectSP,statBackingColor);
+        //EditorGUI.DrawRect(statRectMSP,new Color32(96,96,64,255));
+        //EditorGUI.DrawRect(statRectSP,new Color32(94,118,135,(byte)(GUI.enabled? 191:64)));
        
         
-        GUI.enabled = t.enableStaminaSystem;
-        t.Stamina = EditorGUILayout.Slider(new GUIContent("Stamina", "The maximum stamina level"),t.Stamina, 0, 250.0f);
-        t.s_minimumStaminaToSprint = EditorGUILayout.Slider(new GUIContent("Minimum Stamina To Sprint", "The minimum stamina required to enter a sprint."),t.s_minimumStaminaToSprint,0,t.Stamina);
-        t.s_depletionSpeed = EditorGUILayout.Slider(new GUIContent("Depletion Speed", ""),t.s_depletionSpeed,0,15.0f);
-        t.s_regenerationSpeed = EditorGUILayout.Slider(new GUIContent("Regeneration Speed", "The speed at which stamina will regenerate"),t.s_regenerationSpeed, 0, 10.0f);
+        //GUI.enabled = t.enableStaminaSystem;
+        //t.Stamina = EditorGUILayout.Slider(new GUIContent("Stamina", "The maximum stamina level"),t.Stamina, 0, 250.0f);
+        //t.s_minimumStaminaToSprint = EditorGUILayout.Slider(new GUIContent("Minimum Stamina To Sprint", "The minimum stamina required to enter a sprint."),t.s_minimumStaminaToSprint,0,t.Stamina);
+        //t.s_depletionSpeed = EditorGUILayout.Slider(new GUIContent("Depletion Speed", ""),t.s_depletionSpeed,0,15.0f);
+        //t.s_regenerationSpeed = EditorGUILayout.Slider(new GUIContent("Regeneration Speed", "The speed at which stamina will regenerate"),t.s_regenerationSpeed, 0, 10.0f);
        
         GUI.enabled = true;
         EditorGUILayout.EndVertical();
@@ -1997,11 +2040,13 @@ public class SuperFPEditor : Editor{
         EditorGUILayout.Space();
         EditorGUILayout.BeginVertical(BoxPanel);
 
-        t.enableHeadbob = EditorGUILayout.ToggleLeft(new GUIContent("Enable Headbobing", "Should the controller enable it's headbobing systems?"),t.enableHeadbob);
-        GUI.enabled = t.enableHeadbob;
-        t.headbobSpeed = EditorGUILayout.Slider(new GUIContent("Headbob Speed", "How fast does the headbob sway?"),t.headbobSpeed, 1.0f, 5.0f);
-        t.headbobPower = EditorGUILayout.Slider(new GUIContent("Headbob Power", "How far does the headbob sway?"),t.headbobPower,1.0f,5.0f);
-        t.ZTilt = EditorGUILayout.Slider(new GUIContent("Headbob Tilt", "How much does the headbob tilt at the sway extreme?"),t.ZTilt, 0.0f, 5.0f);
+
+            //ANULADO
+        //t.enableHeadbob = EditorGUILayout.ToggleLeft(new GUIContent("Enable Headbobing", "Should the controller enable it's headbobing systems?"),t.enableHeadbob);
+        //GUI.enabled = t.enableHeadbob;
+        //t.headbobSpeed = EditorGUILayout.Slider(new GUIContent("Headbob Speed", "How fast does the headbob sway?"),t.headbobSpeed, 1.0f, 5.0f);
+        //t.headbobPower = EditorGUILayout.Slider(new GUIContent("Headbob Power", "How far does the headbob sway?"),t.headbobPower,1.0f,5.0f);
+        //t.ZTilt = EditorGUILayout.Slider(new GUIContent("Headbob Tilt", "How much does the headbob tilt at the sway extreme?"),t.ZTilt, 0.0f, 5.0f);
         
         GUI.enabled = true;
         EditorGUILayout.EndVertical();
@@ -2017,12 +2062,13 @@ public class SuperFPEditor : Editor{
         defaultSurvivalStats = SurvivalStatsTSO.FindProperty("defaultSurvivalStats");
         currentSurvivalStats = SurvivalStatsTSO.FindProperty("currentSurvivalStats");
         
+            //ANULADO
             #region Basic settings
             EditorGUILayout.BeginVertical(BoxPanel);
-            GUILayout.Label("<color=grey>Basic Settings</color>",labelSubHeaderStyle,GUILayout.ExpandWidth(true));
-            t.enableSurvivalStats = EditorGUILayout.ToggleLeft(new GUIContent("Enable Survival Stats", "Should the controller enable it's survival systems?"),t.enableSurvivalStats);
-            GUI.enabled = t.enableSurvivalStats;
-            t.statTickRate = EditorGUILayout.Slider(new GUIContent("Stat Ticks Per-minute", "How many times per-minute should the stats do a tick update? Each tick depletes/regenerates the stats by their respective rates below."),t.statTickRate, 0.1f, 20.0f);
+            //GUILayout.Label("<color=grey>Basic Settings</color>",labelSubHeaderStyle,GUILayout.ExpandWidth(true));
+            //t.enableSurvivalStats = EditorGUILayout.ToggleLeft(new GUIContent("Enable Survival Stats", "Should the controller enable it's survival systems?"),t.enableSurvivalStats);
+            //GUI.enabled = t.enableSurvivalStats;
+            //t.statTickRate = EditorGUILayout.Slider(new GUIContent("Stat Ticks Per-minute", "How many times per-minute should the stats do a tick update? Each tick depletes/regenerates the stats by their respective rates below."),t.statTickRate, 0.1f, 20.0f);
             #endregion
             if(survivalStatsFoldout){
 
@@ -2038,9 +2084,10 @@ public class SuperFPEditor : Editor{
             
                 EditorGUILayout.PropertyField(statHP,new GUIContent("Health Points", "How much health does the controller start with?"));
             
-                GUI.enabled = false;
-                EditorGUILayout.ToggleLeft(new GUIContent("Health is critically low?"),currentSurvivalStats.FindPropertyRelative("hasLowHealth").boolValue);
-                GUI.enabled = t.enableSurvivalStats;
+                //ANULADO
+                //GUI.enabled = false;
+                //EditorGUILayout.ToggleLeft(new GUIContent("Health is critically low?"),currentSurvivalStats.FindPropertyRelative("hasLowHealth").boolValue);
+                //GUI.enabled = t.enableSurvivalStats;
                 EditorGUILayout.EndVertical();
                 #endregion
 
@@ -2055,10 +2102,12 @@ public class SuperFPEditor : Editor{
                 EditorGUI.DrawRect(statRectHU,new Color32(142,54,0,(byte)(GUI.enabled? 191:64)));
             
                 EditorGUILayout.PropertyField(statHU,new GUIContent("Hunger Points", "How much Hunger does the controller start with?"));
-                t.hungerDepletionRate = EditorGUILayout.Slider(new GUIContent("Hunger Depletion Per Tick","How much does hunger deplete per tick?"), t.hungerDepletionRate,0,5);
-                GUI.enabled = false;
-                EditorGUILayout.ToggleLeft(new GUIContent("Player is Starving?"),currentSurvivalStats.FindPropertyRelative("isStarving").boolValue);
-                GUI.enabled = t.enableSurvivalStats;
+                
+                //ANULADO
+                //t.hungerDepletionRate = EditorGUILayout.Slider(new GUIContent("Hunger Depletion Per Tick","How much does hunger deplete per tick?"), t.hungerDepletionRate,0,5);
+                //GUI.enabled = false;
+                //EditorGUILayout.ToggleLeft(new GUIContent("Player is Starving?"),currentSurvivalStats.FindPropertyRelative("isStarving").boolValue);
+                //GUI.enabled = t.enableSurvivalStats;
                 EditorGUILayout.EndVertical();
                 #endregion
 
@@ -2073,10 +2122,11 @@ public class SuperFPEditor : Editor{
                 EditorGUI.DrawRect(statRectHY,new Color32(0,194,255,(byte)(GUI.enabled? 191:64)));
                 
                 EditorGUILayout.PropertyField(statHY,new GUIContent("Hydration Points", "How much Hydration does the controller start with?"));
-                t.hydrationDepletionRate = EditorGUILayout.Slider(new GUIContent("Hydration Depletion Per Tick","How much does hydration deplete per tick?"), t.hydrationDepletionRate,0,5);
-                GUI.enabled = false;
-                EditorGUILayout.ToggleLeft(new GUIContent("Player is Dehydrated?"),currentSurvivalStats.FindPropertyRelative("isDehydrated").boolValue);
-                GUI.enabled = t.enableSurvivalStats;
+                //ANULADO
+                //t.hydrationDepletionRate = EditorGUILayout.Slider(new GUIContent("Hydration Depletion Per Tick","How much does hydration deplete per tick?"), t.hydrationDepletionRate,0,5);
+                //GUI.enabled = false;
+                //EditorGUILayout.ToggleLeft(new GUIContent("Player is Dehydrated?"),currentSurvivalStats.FindPropertyRelative("isDehydrated").boolValue);
+                //GUI.enabled = t.enableSurvivalStats;
                 EditorGUILayout.EndVertical();
                 #endregion
             }
@@ -2090,7 +2140,7 @@ public class SuperFPEditor : Editor{
         #endregion
 
         #region Interactable
-        EditorGUILayout.Space(); EditorGUILayout.LabelField("",GUI.skin.horizontalSlider,GUILayout.MaxHeight(6)); EditorGUILayout.Space();
+        //EditorGUILayout.Space(); EditorGUILayout.LabelField("",GUI.skin.horizontalSlider,GUILayout.MaxHeight(6)); EditorGUILayout.Space();
         GUILayout.Label("Interactables Settings",labelHeaderStyle,GUILayout.ExpandWidth(true));
         EditorGUILayout.Space();
         EditorGUILayout.BeginVertical(BoxPanel);
