@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class EntitiesGlobalData : Singleton<EntitiesGlobalData>
+public class MongliEntitiesGlobalData : Singleton<MongliEntitiesGlobalData>
 {
     public GameObject prefabDummy;
     public GameObject prefabClient;

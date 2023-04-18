@@ -8,7 +8,7 @@ public class MongliEntitySpawner : Singleton<MongliEntitySpawner>
     {
         if (userFetchData.transform.position == new Vector3(-1, -1, -1)) return null;
 
-        GameObject prefab = EntitiesGlobalData.Instance.GetDummyNetIdByUserId(userFetchData.id);
+        GameObject prefab = MongliEntitiesGlobalData.Instance.GetDummyNetIdByUserId(userFetchData.id);
         NetworkIdentity netId = MongliSpawn(prefab, userFetchData.transform.position, userFetchData.transform.rotation);
 
         netId.gameObject.name = userFetchData.nickname + "_Dummy";
@@ -26,7 +26,7 @@ public class MongliEntitySpawner : Singleton<MongliEntitySpawner>
     }
     internal MongliUser SpawnDummy(uint userId, MongliUser mUser, Vector3 pos, Quaternion rot)
     {
-        GameObject prefab = EntitiesGlobalData.Instance.GetDummyNetIdByUserId(userId);
+        GameObject prefab = MongliEntitiesGlobalData.Instance.GetDummyNetIdByUserId(userId);
         NetworkIdentity netId = MongliSpawn(prefab, pos, rot);
 
         netId.gameObject.name = mUser.nickName + "_Dummy";        
@@ -42,7 +42,7 @@ public class MongliEntitySpawner : Singleton<MongliEntitySpawner>
     }
     internal MongliUser SpawnClient(uint user_id, MongliUser mUser, Vector3 pos, Quaternion rot, NetworkConnectionToClient conn)
     {
-        GameObject prefab = EntitiesGlobalData.Instance.GetClientPrefab(user_id);
+        GameObject prefab = MongliEntitiesGlobalData.Instance.GetClientPrefab(user_id);
         NetworkIdentity netId = MongliSpawn(prefab, pos, rot,conn);        
         
         netId.gameObject.name = mUser.nickName + "_Client";
@@ -58,7 +58,7 @@ public class MongliEntitySpawner : Singleton<MongliEntitySpawner>
     }
     internal MongliUser SpawnClient(UserData usrData, Vector3 pos, Quaternion rot, NetworkConnectionToClient conn)
     {
-        GameObject prefab = EntitiesGlobalData.Instance.GetClientPrefab(usrData.user_id);
+        GameObject prefab = MongliEntitiesGlobalData.Instance.GetClientPrefab(usrData.user_id);
         NetworkIdentity netId = MongliSpawn(prefab, pos, rot, conn);
         netId.gameObject.name = usrData.nickname + "_Client";
 

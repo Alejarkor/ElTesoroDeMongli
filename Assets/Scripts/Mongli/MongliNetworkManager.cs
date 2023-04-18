@@ -13,7 +13,7 @@ public class MongliNetworkManager : NetworkManager
     } 
     public override void OnStartServer()
     { 
-        _ = GameEntityInitializer.Instance.Init();
+        _ = MongliGameEntityInitializer.Instance.Init();
 
         Debug.Log("SERVER STARTED"); 
     }
@@ -26,7 +26,7 @@ public class MongliNetworkManager : NetworkManager
     {
         MongliUser mUser;        
 
-        if (EntitiesGlobalData.Instance.mongliUsersDictionary.TryGetValue(usrData.user_id, out mUser))
+        if (MongliEntitiesGlobalData.Instance.mongliUsersDictionary.TryGetValue(usrData.user_id, out mUser))
         {
            
             if (mUser.isConnected)
@@ -45,7 +45,7 @@ public class MongliNetworkManager : NetworkManager
 
                 //Instanciar jugador  
                 MongliUser mongliUser = MongliEntitySpawner.Instance.SpawnClient(usrData.user_id, mUser,  pos, rot, conn); 
-                EntitiesGlobalData.Instance.UpdateUser(usrData.user_id, mongliUser);                
+                MongliEntitiesGlobalData.Instance.UpdateUser(usrData.user_id, mongliUser);                
             }
         }
         else
@@ -56,17 +56,17 @@ public class MongliNetworkManager : NetworkManager
 
             mUser = MongliEntitySpawner.Instance.SpawnClient(usrData, Vector3.zero, Quaternion.identity, conn);
             Debug.Log("MongliUser antes del DummySpawn: " + usrData.user_id+", " + mUser.net_id + ", " + mUser.isConnected + ", " + mUser.nickName + ", " + mUser.transform.position);
-            EntitiesGlobalData.Instance.mongliUsersDictionary.TryAdd(usrData.user_id, mUser);            
+            MongliEntitiesGlobalData.Instance.mongliUsersDictionary.TryAdd(usrData.user_id, mUser);            
         }
     }
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {        
         Debug.Log("Empieza la desconexion");
-        uint? ur_id = EntitiesGlobalData.Instance.GetMongliUserByConn(conn);
+        uint? ur_id = MongliEntitiesGlobalData.Instance.GetMongliUserByConn(conn);
         if (ur_id != null)
         {
             //Pillar posicion del client
-            MongliUser mUser = EntitiesGlobalData.Instance.mongliUsersDictionary[(uint)ur_id];
+            MongliUser mUser = MongliEntitiesGlobalData.Instance.mongliUsersDictionary[(uint)ur_id];
 
             Debug.Log("MongliUser antes del DummySpawn: " + mUser.net_id + ", " + mUser.isConnected + ", " + mUser.nickName + ", " + mUser.transform.position);
 
@@ -82,7 +82,7 @@ public class MongliNetworkManager : NetworkManager
 
             Debug.Log("MongliUser despues del DummySpawn: " + mUser.net_id + ", " + mUser.isConnected + ", " + mUser.nickName + ", " + mUser.transform.position);
             //Actualizar la lista
-            EntitiesGlobalData.Instance.UpdateUser((uint)ur_id, mUser);
+            MongliEntitiesGlobalData.Instance.UpdateUser((uint)ur_id, mUser);
             //Enviar a la base de datos los datos de este jugador
             UsersUpdateData updateData = MongliAPIConnector.UsersDataBase((uint)ur_id, mUser);
 
@@ -95,7 +95,7 @@ public class MongliNetworkManager : NetworkManager
     }
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
-        foreach (MongliUser mUser in EntitiesGlobalData.Instance.mongliUsersDictionary.Values) 
+        foreach (MongliUser mUser in MongliEntitiesGlobalData.Instance.mongliUsersDictionary.Values) 
         {
             //mUser.net_id.GetComponent<MongliUserEntity>().InitUser(mUser);
         }

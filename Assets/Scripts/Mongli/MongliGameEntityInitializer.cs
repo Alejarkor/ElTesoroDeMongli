@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class GameEntityInitializer : Singleton<GameEntityInitializer>
+public class MongliGameEntityInitializer : Singleton<MongliGameEntityInitializer>
 {   
     // Start is called before the first frame update
     public async Task Init()
@@ -19,7 +19,7 @@ public class GameEntityInitializer : Singleton<GameEntityInitializer>
             MongliUser? mongliUser = MongliEntitySpawner.Instance.SpawnDummy(usersFetchData[i]);
             if (mongliUser != null) 
             {
-                EntitiesGlobalData.Instance.AddUser((MongliUser)mongliUser, usersFetchData[i].id);
+                MongliEntitiesGlobalData.Instance.AddUser((MongliUser)mongliUser, usersFetchData[i].id);
             }
         }
     }
