@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class MongliNetworkManager : NetworkManager
 {
@@ -13,8 +12,9 @@ public class MongliNetworkManager : NetworkManager
         (authenticator as MongliNetworkAuthenticator).OnClientAccepted += OnClientAccepted;        
     } 
     public override void OnStartServer()
-    {
-        base.OnStartServer();        
+    { 
+        _ = GameEntityInitializer.Instance.Init();
+
         Debug.Log("SERVER STARTED"); 
     }
     public override void OnStopServer()
@@ -26,94 +26,78 @@ public class MongliNetworkManager : NetworkManager
     {
         MongliUser mUser;        
 
-        if (UserSynchronizer.Instance.mongliUsersDictionary.TryGetValue(usrData.user_id, out mUser))
+        if (EntitiesGlobalData.Instance.mongliUsersDictionary.TryGetValue(usrData.user_id, out mUser))
         {
-            MongliUser mongliUser = (MongliUser)mUser;
-            if (mongliUser.isConnected)
+           
+            if (mUser.isConnected)
             {
-                Debug.Log(mongliUser.nickName + " is connected jet but is traying to do again");
+                Debug.Log(mUser.nickName + " is connected jet but is traying to do again");
             }
             else
-            {
-                Debug.Log(mongliUser.nickName + " is sleeping so wakeUp");
+            {                
+                //Guardar valores de transform antes de destruir el objeto
+                Vector3 pos = mUser.transform.position;
+                Quaternion rot = mUser.transform.rotation;
+                Vector3 scale = mUser.transform.localScale;
+
                 //Destruir el dummy durmiente
-                NetworkServer.Destroy(mongliUser.net_id.gameObject);
+                NetworkServer.Destroy(mUser.net_id.gameObject);
 
-                //Instanciar jugador                
-                Transform playerTransform = UserSynchronizer.Instance.mongliUsersDictionary[usrData.user_id].transform;   
-
-                NetworkIdentity netId = MongliSpawn(playerPrefab, playerTransform.position, playerTransform.rotation, conn);
-                UserSynchronizer.Instance.UpdateUser(usrData.user_id, netId, conn, playerTransform, true);
-                netId.GetComponent<MongliPlayerNetwork>().AwakePlayer(0.5f);
+                //Instanciar jugador  
+                MongliUser mongliUser = MongliEntitySpawner.Instance.SpawnClient(usrData.user_id, mUser,  pos, rot, conn); 
+                EntitiesGlobalData.Instance.UpdateUser(usrData.user_id, mongliUser);                
             }
         }
         else
         {
 
             Debug.Log(usrData.nickname + " is first time connecting");
-            Transform startPos = GetStartPosition();            
+                   
 
-            NetworkIdentity netId = MongliSpawn(playerPrefab, Vector3.zero, Quaternion.identity, conn);
-            MongliUser mongliUser = new MongliUser();
-            mongliUser.net_id = netId;
-            mongliUser.nickName = usrData.nickname;
-            mongliUser.isConnected = true;
-            mongliUser.conn = conn;
-            mongliUser.transform = netId.GetComponent<MongliPlayerNetwork>().playerTransform;
-            UserSynchronizer.Instance.mongliUsersDictionary.TryAdd(usrData.user_id, mongliUser);
-            netId.GetComponent<MongliPlayerNetwork>().AwakePlayer(0.5f);
+            mUser = MongliEntitySpawner.Instance.SpawnClient(usrData, Vector3.zero, Quaternion.identity, conn);
+            Debug.Log("MongliUser antes del DummySpawn: " + usrData.user_id+", " + mUser.net_id + ", " + mUser.isConnected + ", " + mUser.nickName + ", " + mUser.transform.position);
+            EntitiesGlobalData.Instance.mongliUsersDictionary.TryAdd(usrData.user_id, mUser);            
         }
     }
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
-    {
-        base.OnServerDisconnect(conn);
-
-        //Instanciar al dummy
-        //Actualizar la lista
-        //Destruir al player
-        //Enviar a la base de datos los datos de este jugador
-
+    {        
         Debug.Log("Empieza la desconexion");
-        uint? ur_id = UserSynchronizer.Instance.GetMongliUserByConn(conn);
-
+        uint? ur_id = EntitiesGlobalData.Instance.GetMongliUserByConn(conn);
         if (ur_id != null)
         {
-            uint user_id = (uint)ur_id;
-            if (UserSynchronizer.Instance.mongliUsersDictionary[user_id].isConnected)
-            {
-                Debug.Log("A dormir");
-                //Destruir el dummy durmiente
-                Vector3 pos = UserSynchronizer.Instance.mongliUsersDictionary[user_id].transform.position;
-                Quaternion rot = UserSynchronizer.Instance.mongliUsersDictionary[user_id].transform.rotation;
-                NetworkServer.Destroy(UserSynchronizer.Instance.mongliUsersDictionary[user_id].net_id.gameObject);
-                
-                NetworkIdentity netId = MongliSpawn(UserSynchronizer.Instance.GetDummyNetIdByUserId(user_id), pos, rot);
-                UserSynchronizer.Instance.UpdateUser(user_id, netId, null, netId.transform, false);
-                netId.GetComponent<MongliDummyNetwork>().GoToSleepBitch();
-            }
-            else
-            {
-                Debug.Log(UserSynchronizer.Instance.mongliUsersDictionary[user_id].nickName + " is not connected but is traying to disconnect again");
-            }
+            //Pillar posicion del client
+            MongliUser mUser = EntitiesGlobalData.Instance.mongliUsersDictionary[(uint)ur_id];
+
+            Debug.Log("MongliUser antes del DummySpawn: " + mUser.net_id + ", " + mUser.isConnected + ", " + mUser.nickName + ", " + mUser.transform.position);
+
+            Vector3 pos = mUser.transform.position;
+            Quaternion rot = mUser.transform.rotation;
+            Vector3 scale = mUser.transform.localScale;
+
+            //Destruir al player
+            //NetworkServer.Destroy(EntitiesGlobalData.Instance.mongliUsersDictionary[(uint)ur_id].net_id.gameObject);
+            NetworkServer.DestroyPlayerForConnection(conn);
+            //Instanciar al dummy
+            mUser = MongliEntitySpawner.Instance.SpawnDummy((uint)ur_id,mUser, pos, rot);
+
+            Debug.Log("MongliUser despues del DummySpawn: " + mUser.net_id + ", " + mUser.isConnected + ", " + mUser.nickName + ", " + mUser.transform.position);
+            //Actualizar la lista
+            EntitiesGlobalData.Instance.UpdateUser((uint)ur_id, mUser);
+            //Enviar a la base de datos los datos de este jugador
+            UsersUpdateData updateData = MongliAPIConnector.UsersDataBase((uint)ur_id, mUser);
+
+            StartCoroutine(MongliAPIConnector.SendUpdateUserDataCoroutine(updateData));
         }
         else
         {
-            Debug.Log("Algo va mal, este jugador aun no existe");          
-        }
-    }   
-
-
-    private NetworkIdentity MongliSpawn(GameObject go, Vector3 position, Quaternion rotation) 
-    {
-        GameObject networkInstance = Instantiate(go, position, rotation);
-        NetworkServer.Spawn(networkInstance);       
-        return networkInstance.GetComponent<NetworkIdentity>();
+            Debug.Log("Algo va mal, este jugador aun no existe");
+        }       
     }
-
-    private NetworkIdentity MongliSpawn(GameObject go, Vector3 position, Quaternion rotation, NetworkConnectionToClient conn)
+    public override void OnServerConnect(NetworkConnectionToClient conn)
     {
-        GameObject networkInstance = Instantiate(go, position, rotation);
-        NetworkServer.AddPlayerForConnection(conn, networkInstance);        
-        return networkInstance.GetComponent<NetworkIdentity>();
+        foreach (MongliUser mUser in EntitiesGlobalData.Instance.mongliUsersDictionary.Values) 
+        {
+            //mUser.net_id.GetComponent<MongliUserEntity>().InitUser(mUser);
+        }
     }
 }

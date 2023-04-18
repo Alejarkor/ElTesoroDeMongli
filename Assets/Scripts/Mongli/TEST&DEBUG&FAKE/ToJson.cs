@@ -1,15 +1,17 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
+
 
 public class ToJson : MonoBehaviour
 {
     public string message;
     public uint id;
     public string nickname = "Alejarkor";
-    public List<GetUserData> usersData = new List<GetUserData>();
-
+    public List<UserFetchData> usersData = new List<UserFetchData>();
+    public UsersUpdateData dataToSend; 
 
     // Start is called before the first frame update
     void Start()
@@ -19,24 +21,20 @@ public class ToJson : MonoBehaviour
     }
 
     private void SendData() 
-    {
-        
-        List<UpdateData> updateDATA = new List<UpdateData>();
-        UpdateData upd = new UpdateData();
+    {        
+        List<UserUpdateData> updateDATA = new List<UserUpdateData>();
+        UserUpdateData upd = new UserUpdateData();
         upd.id = id;
         upd.transform = new TransformData(transform);
-        updateDATA.Add(upd);
-        message = JsonUtility.ToJson(updateDATA.ToArray());
-        UsersUpdateData dataToSend = new UsersUpdateData();
+        updateDATA.Add(upd); 
+       
         dataToSend.usersUpdateData = updateDATA;
-
-        message = JsonUtility.ToJson(dataToSend);
+        message = JsonUtility.ToJson(dataToSend); 
         StartCoroutine(MongliAPIConnector.SendUpdateUserDataCoroutine(dataToSend));
     }
 
     private async void FetchUsers()
     {
-        usersData = await MongliAPIConnector.FetchUsersAsync();
-        // Procesa UsersData según sea necesario.
+        usersData = await MongliAPIConnector.FetchUsersAsync();        
     }
 }

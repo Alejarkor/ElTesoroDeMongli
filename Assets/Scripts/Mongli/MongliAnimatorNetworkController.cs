@@ -32,7 +32,7 @@ public class MongliAnimatorNetworkController: NetworkBehaviour
         {
             SetFloatToClients(paramName, value);
         }
-        else if (isLocalPlayer)
+        else
         {
             anim.SetFloat(paramName, value);
         }

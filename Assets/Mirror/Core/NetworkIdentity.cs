@@ -31,6 +31,7 @@ namespace Mirror
         public NetworkWriter observersWriter;
     }
 
+    [Serializable]
     /// <summary>NetworkIdentity identifies objects across the network.</summary>
     [DisallowMultipleComponent]
     // NetworkIdentity.Awake initializes all NetworkComponents.

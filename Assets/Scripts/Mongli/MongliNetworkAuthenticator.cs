@@ -47,7 +47,7 @@ public class MongliNetworkAuthenticator : NetworkAuthenticator
     /// <param name="conn">Connection to client.</param>
     public override void OnServerAuthenticate(NetworkConnectionToClient conn) 
     {
-        Debug.Log("on server: cliente quiere autenticarse");
+       
     }
 
     /// <summary>
@@ -57,8 +57,7 @@ public class MongliNetworkAuthenticator : NetworkAuthenticator
     /// <param name="msg">The message payload</param>
     public void OnAuthRequestMessage(NetworkConnectionToClient conn, AuthRequestMessage msg)
     {    
-        //Debug.Log("on server: Mensaje recibido");
-        Debug.Log("userID: " + msg.user_id + " AccesToken: " + msg.access_token);       
+        //Debug.Log("on server: Mensaje recibido");       
         StartCoroutine(ValidateMongliLoginCoroutine(conn, msg));
     }
        
@@ -70,8 +69,7 @@ public class MongliNetworkAuthenticator : NetworkAuthenticator
         yield return StartCoroutine(MongliAPIConnector.ValidateLoginCoroutine(msg.user_id, msg.access_token, (LoginResponse loginResponse) =>
         {
             if (loginResponse.error_code == 0)
-            {
-                Debug.Log("Envío al cliente y trato de instanciar");
+            {               
                 authResponseMessage.accepted = true;
                 conn.Send(authResponseMessage);
                 ServerAccept(conn);
@@ -107,8 +105,7 @@ public class MongliNetworkAuthenticator : NetworkAuthenticator
     /// </summary>
     public override void OnClientAuthenticate()
     {                
-        AuthRequestMessage authRequestMessage = LoginGrabber.Instance.AuthData;
-        Debug.Log("ON CLIENT AUTHENTICATE: " + authRequestMessage.user_id + " " + authRequestMessage.access_token);
+        AuthRequestMessage authRequestMessage = LoginGrabber.Instance.AuthData;       
         NetworkClient.Send(authRequestMessage);
     }
 
@@ -118,9 +115,15 @@ public class MongliNetworkAuthenticator : NetworkAuthenticator
     /// <param name="msg">The message payload</param>
     public void OnAuthResponseMessage(AuthResponseMessage msg)
     {
-        // Authentication has been accepted
-        Debug.Log("OnCLient: " + msg.accepted.ToString());
-        ClientAccept();
+        // Authentication has been accepted        
+        if (msg.accepted)
+        {
+            ClientAccept();
+        }
+        else 
+        {
+            ClientReject();
+        }        
     }
 
     #endregion

@@ -1,26 +1,22 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Cinemachine;
-using System;
+using CMF;
 
-public class MongliPlayerNetwork : NetworkBehaviour
+
+public class MongliPlayerNetwork : MongliUserEntity
 {
     #region Test&Debug
-
     //public bool fakeInput;
-
     #endregion
 
     #region References
-    public Transform playerTransform;     
+    //public Transform playerTransform;     
     public Animator anim;
-    public Transform playerCamera;
-    public PlayerInput playerInput;
-    public InputSwitcher inputSwitcher;
+    public Transform playerCamera;   
     public MongliCharacterController playerController;
     public GameObject character;
-    public GameObject playerCanvas;
+    public GameObject playerCanvas;    
     #endregion
 
     public float playerSpeed;
@@ -40,59 +36,32 @@ public class MongliPlayerNetwork : NetworkBehaviour
     private Quaternion networkPlayerRotation;
     #endregion
 
+    
     public override void OnStartClient()
-    {
-        base.OnStartClient();
-
+    {      
         if (!isLocalPlayer)
         {
-            Debug.Log("cliente remoto");
-            Destroy(playerCamera.gameObject);
-            Destroy(playerCanvas.gameObject);
-            Destroy(playerTransform.GetComponent<CapsuleCollider>());
-            Destroy(playerTransform.GetComponent<Rigidbody>());
-            Destroy(gameObject.GetComponent<MongliCameraInput>());
-            Destroy(gameObject.GetComponent<InputSwitcher>());
-            Destroy(gameObject.GetComponent<PlayerInput>());
+            SetupRemoteClient();            
         }
         else 
         {
-            Debug.Log("cliente local");
-            playerInput.enabled = true;
+            SetupLocalClient();            
         }
-    }
-    public override void OnStopClient()
-    {
-        base.OnStopClient();     
-    }
+        AwakePlayer(1f);
+    }   
     public override void OnStartServer()
-    {
-        base.OnStartServer();
-        Destroy(playerCamera.gameObject);
-        Destroy(playerCanvas.gameObject);
-        Destroy(character);
-        Destroy(gameObject.GetComponent<MongliCameraInput>());
-        Destroy(gameObject.GetComponent<InputSwitcher>());
-        Destroy(gameObject.GetComponent<PlayerInput>());
-    }    
-    
-
+    {                
+        SetupServer();
+        SetUserInfo(nickname);
+    }
+   
     // Update is called once per frame
     void Update()
     {        
         if (isServer)
         {
-            MoveCharacter(networkMoveInputProcessed, networkJumpDown, networkJumpDown, networkActionDown, networkActionDown, networkSlideDown, networkSlideDown, networkCrouchDown, networkCrouchDown);
-            SendTransformToClient(playerTransform.position, playerTransform.rotation);
-
-            networkJumpDown = false;
-            //networkJumpPressed = false;
-            networkActionDown = false;
-            //networkActionPressed = false;
-            networkSlideDown = false;
-            //networkSlidePressed = false;
-            networkCrouchDown = false;
-            //networkCrouchPressed = false;
+            MoveCharacter(networkMoveInputProcessed, networkJumpDown, networkJumpPressed, networkActionDown, networkActionPressed, networkSlideDown, networkSlidePressed, networkCrouchDown, networkCrouchPressed);
+            SendTransformToClient(transform.position, CharacterTransform.localRotation);
         }
         else if (isClient)
         {
@@ -103,36 +72,55 @@ public class MongliPlayerNetwork : NetworkBehaviour
                 {                    
                     ProcessInput();
                     SendMoveInputToServer(networkMoveInputProcessed);
-                    MoveCharacter(networkMoveInputProcessed, networkJumpDown, networkJumpDown, networkActionDown, networkActionDown, networkSlideDown, networkSlideDown, networkCrouchDown, networkCrouchDown);
-                    playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.1f);
-                    playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, networkPlayerRotation, 0.1f);
-
-                    networkJumpDown = false;
-                    //networkJumpPressed = false;
-                    networkActionDown = false;
-                    //networkActionPressed = false;
-                    networkSlideDown = false;
-                    //networkSlidePressed = false;
-                    networkCrouchDown = false;
-                    //networkCrouchPressed = false;
+                    MoveCharacter(networkMoveInputProcessed, networkJumpDown, networkJumpPressed, networkActionDown, networkActionPressed, networkSlideDown, networkSlidePressed, networkCrouchDown, networkCrouchPressed);
+                    transform.position = Vector3.Lerp(transform.position, networkPlayerPosition, 0.01f);
+                    CharacterTransform.localRotation = Quaternion.Lerp(CharacterTransform.localRotation, networkPlayerRotation, 0.01f);
                 }
             }
             else 
             {
-                playerTransform.position = Vector3.Lerp(playerTransform.position, networkPlayerPosition, 0.2f);
-                playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, networkPlayerRotation, 0.2f);
+                transform.position = Vector3.Lerp(transform.position, networkPlayerPosition, 0.1f);
+                CharacterTransform.localRotation = Quaternion.Lerp(CharacterTransform.localRotation, networkPlayerRotation, 0.1f);
             }
         }
     }
 
-    #region Functions
-
+    #region Functions      
+    private void SetupLocalClient() 
+    {       
+        GetComponent<PlayerInput>().enabled = true;
+        playerCamera.transform.parent = null;
+        Destroy(boxName.gameObject);           
+    }
+    private void SetupRemoteClient() 
+    {                
+        Destroy(playerCamera.gameObject);
+        Destroy(playerCanvas.gameObject);
+        Destroy(GetComponent<Mover>());
+        Destroy(GetComponent<Rigidbody>());
+        Destroy(GetComponent<MongliWallkerController>());
+        Destroy(GetComponent<PlayerInput>());
+        Destroy(GetComponent<MongliCameraInput>());
+        Destroy(GetComponent<InputSwitcher>());
+        Destroy(CharacterTransform.GetComponent<SmoothPosition>());
+        Destroy(CharacterTransform.GetComponent<TurnTowardControllerVelocity>());        
+    }  
+    private void SetupServer() 
+    {
+        Destroy(playerCamera.gameObject);
+        Destroy(playerCanvas.gameObject);
+        Destroy(character);
+        Destroy(boxName.gameObject);
+        Destroy(gameObject.GetComponent<MongliCameraInput>());
+        Destroy(gameObject.GetComponent<InputSwitcher>());
+        Destroy(gameObject.GetComponent<PlayerInput>());        
+    }
     internal void AwakePlayer(float v)
     {
-        MongliAnimatorNetworkController anim = GetComponentInChildren<MongliAnimatorNetworkController>();
-        anim.WakeUpBitch(1f);
+        Debug.Log("Wake up client " + nickname);
+        MongliAnimatorNetworkController anim = GetComponent<MongliAnimatorNetworkController>();
+        anim.WakeUpBitch(v);        
     }  
-
     private void ProcessInput()
     {
         Vector3 moveInputVector3 = playerCamera.TransformDirection(new Vector3(moveInput.x, 0f, moveInput.y));
@@ -143,7 +131,8 @@ public class MongliPlayerNetwork : NetworkBehaviour
     void MoveCharacter(Vector2 moveInput, bool jumpD, bool jumpP, bool actionD, bool actionP, bool slideD, bool slideP, bool crouchD, bool crouchP)
     {
         playerController.SetInput(moveInput, jumpD, jumpP, actionD, actionP, slideD, slideP, crouchD, crouchP);
-    }
+    }       
+
     #endregion
 
     #region MSG TO SERVER
@@ -200,7 +189,19 @@ public class MongliPlayerNetwork : NetworkBehaviour
     {   
         networkPlayerPosition = position;
         networkPlayerRotation = rotation;        
+    }   
+
+    [ClientRpc]
+    public override void SetUserInfo(string nkname)
+    {
+        Debug.Log("SET USER INFO!");
+        nickname = nkname;
+        if (!isLocalPlayer)
+        {
+            boxName.SetName(nickname);
+        }
     }
+
     #endregion
 
     #region Capture Actions
@@ -214,11 +215,11 @@ public class MongliPlayerNetwork : NetworkBehaviour
     {        
         networkJumpDown = value.Get<float>() == 1 ? true : false;
         networkJumpPressed = value.Get<float>() == 1 ? true : false;
-        if (isLocalPlayer) 
+        if (isLocalPlayer)
         {
             SendJumpDownToServer(networkJumpDown);
             SendJumpPressedToServer(networkJumpPressed);
-        }       
+        }
     }   
     private void OnActionDown(InputValue value)
     {       
@@ -227,8 +228,8 @@ public class MongliPlayerNetwork : NetworkBehaviour
         if (isLocalPlayer)
         {
             SendActionDownToServer(networkActionDown);
-            SendActionDownToServer(networkActionPressed);
-        }       
+            SendActionPressedToServer(networkActionPressed);
+        }
     } 
     private void OnSlideDown(InputValue value)
     {        
@@ -238,7 +239,7 @@ public class MongliPlayerNetwork : NetworkBehaviour
         {
             SendSlideDownToServer(networkSlideDown);
             SendSlidePressedToServer(networkSlidePressed);
-        }       
+        }
     }  
     private void OnCrouchDown(InputValue value)
     {        
@@ -249,7 +250,6 @@ public class MongliPlayerNetwork : NetworkBehaviour
             SendCrouchDownToServer(networkCrouchDown);
             SendCrouchPressedToServer(networkCrouchPressed);
         }
-       
     }  
     internal void SetNickName(string nickname)
     {

@@ -577,7 +577,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d59d1a81049fa9a44ab4cdcee36289b8, type: 2}
+  - {fileID: 2100000, guid: 121b024a4658cf4409af8632d7088c2e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2790,8 +2790,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fake: 0
-  user: 2
-  token: 
+  user: 3
+  token: 726aa92897cc634c5d175091ffaa60758b180b12583a8393e83334fd805b5b9e
 --- !u!114 &1423208948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3142,7 +3142,7 @@ MonoBehaviour:
   networkAddress: 81.184.46.52
   maxConnections: 100
   authenticator: {fileID: 1562093899}
-  playerPrefab: {fileID: 3922236032030079737, guid: 4c714ebfda2df044bb7a653f87339827, type: 3}
+  playerPrefab: {fileID: 6604231795454381857, guid: 9c0041f5f195680488f9b377c4d00f42, type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 1
   spawnPrefabs:
