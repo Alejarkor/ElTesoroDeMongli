@@ -79,10 +79,10 @@ namespace CMF
 		private Vector3[] raycastArrayStartPositions;
 
 		//Optional list of colliders to ignore when raycasting;
-		private Collider[] ignoreList;
+		private Collider[] ignoreList = new Collider[0];
 
 		//Array to store layers of colliders in ignore list;
-		private int[] ignoreListLayers;
+		private int[] ignoreListLayers = new int[0];
 
 		//Whether to draw debug information (hit positions, hit normals...) in the editor;
 		public bool isInDebugMode = false;
@@ -95,6 +95,9 @@ namespace CMF
 		{
 			tr = _transform;
 
+			//Store "Ignore Raycast" layer number for later;
+			ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
+
 			if(_collider == null)
 				return;
 
@@ -102,9 +105,6 @@ namespace CMF
 
 			//Add collider to ignore list;
 			ignoreList[0] = _collider;
-
-			//Store "Ignore Raycast" layer number for later;
-			ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
 
 			//Setup array to store ignore list layers;
 			ignoreListLayers = new int[ignoreList.Length];
@@ -175,33 +175,54 @@ namespace CMF
 				ignoreListLayers = new int[ignoreList.Length]; 
 			}
 
+			StoreAndApplyIgnoreListLayers();
+
+			try
+			{
+				//Depending on the chosen mode of detection, call different functions to check for colliders;
+				switch (castType)
+				{
+					case CastType.Raycast:
+						CastRay(_worldOrigin, _worldDirection);
+						break;
+					case CastType.Spherecast:
+						CastSphere(_worldOrigin, _worldDirection);
+						break;
+					case CastType.RaycastArray:
+						CastRayArray(_worldOrigin, _worldDirection);
+						break;
+					default:
+						hasDetectedHit = false;
+						break;
+				}
+			}
+			finally
+			{
+				RestoreIgnoreListLayers();
+			}
+		}
+
+		private void StoreAndApplyIgnoreListLayers()
+		{
 			//(Temporarily) move all objects in ignore list to 'Ignore Raycast' layer;
 			for(int i = 0; i < ignoreList.Length; i++)
 			{
+				if(ignoreList[i] == null)
+					continue;
+
 				ignoreListLayers[i] = ignoreList[i].gameObject.layer;
 				ignoreList[i].gameObject.layer = ignoreRaycastLayer;
 			}
+		}
 
-			//Depending on the chosen mode of detection, call different functions to check for colliders;
-			switch (castType)
-			{
-				case CastType.Raycast:
-					CastRay(_worldOrigin, _worldDirection);
-					break;
-				case CastType.Spherecast:
-					CastSphere(_worldOrigin, _worldDirection);
-					break;
-					case CastType.RaycastArray:
-					CastRayArray(_worldOrigin, _worldDirection);
-					break;
-				default:
-					hasDetectedHit = false;
-					break;
-			}
-
+		private void RestoreIgnoreListLayers()
+		{
 			//Reset collider layers in ignoreList;
 			for(int i = 0; i < ignoreList.Length; i++)
 			{
+				if(ignoreList[i] == null)
+					continue;
+
 				ignoreList[i].gameObject.layer = ignoreListLayers[i];
 			}
 		}
@@ -307,12 +328,12 @@ namespace CMF
 					hitDistance = VectorMath.ExtractDotVector(_origin - hitPosition, _direction).magnitude;
 				}
 
-				Collider _col = hitColliders[0];
+				Collider _col = GetCollider();
 
 				//Calculate real surface normal by casting an additional raycast;
 				if(calculateRealSurfaceNormal)
 				{
-					if(_col.Raycast(new Ray(hitPosition - _direction, _direction), out _hit, 1.5f))
+					if(_col != null && _col.Raycast(new Ray(hitPosition - _direction, _direction), out _hit, 1.5f))
 					{
 						if(Vector3.Angle(_hit.normal, -_direction) >= 89f)
 							hitNormal = backupNormal;
@@ -396,13 +417,13 @@ namespace CMF
 		//Returns a reference to the collider that was hit by the raycast;
 		public Collider GetCollider()
 		{
-			return hitColliders[0];
+			return hitColliders.Count > 0 ? hitColliders[0] : null;
 		}
 
 		//Returns a reference to the transform component attached to the collider that was hit by the raycast;
 		public Transform GetTransform()
 		{
-			return hitTransforms[0];
+			return hitTransforms.Count > 0 ? hitTransforms[0] : null;
 		}
 
 		//Setters;
