@@ -7,6 +7,7 @@ Study focused on updating Unity/packages and evaluating whether to keep Mirror o
 Repository inspection shows:
 
 - Unity Editor: `2021.3.4f1`.
+- Target product requirement: browser/WebGL build.
 - Active build scene: `Assets/Scenes/MONGLICLIENT.unity`.
 - Disabled/prototype scenes still present in build settings: `GameScene`, `CharacterControllerTest`, `MONGLISERVER`, `Empty`, Input System sample.
 - Package versions:
@@ -18,16 +19,32 @@ Repository inspection shows:
 - Networking appears to use Mirror embedded directly under `Assets/Mirror`, not as a clean package dependency.
 - Some Mirror core files have project-local modifications in history/current comparison.
 
+## Critical WebGL/browser constraint
+
+Because the game targets browser/WebGL, the networking stack must support browser-safe transports.
+
+In practice:
+
+- Do not assume normal UDP sockets are available from the browser client.
+- Do not assume raw TCP sockets are available from the browser client.
+- Prefer `WSS` / secure WebSocket for production browser builds.
+- HTTP/REST is fine for login, inventory, matchmaking and persistence, but not ideal for high-frequency gameplay state.
+- WebRTC DataChannels can be interesting for low-latency browser networking, but they add signaling, NAT traversal and server/relay complexity.
+
+This means every networking candidate must be evaluated by transport, not only by API.
+
 ## Main conclusion
 
 Do **not** upgrade Unity, packages and networking stack in the same step.
+
+Also: do **not** choose a new networking library unless its WebGL transport story is proven with a running prototype.
 
 Recommended approach:
 
 1. Stabilize the current project.
 2. Upgrade Unity/packages in a dedicated compatibility branch.
-3. Build a small isolated networking prototype with the candidate stack.
-4. Migrate gameplay networking only after validating feature parity.
+3. Build a small isolated WebGL networking prototype with the candidate stack.
+4. Migrate gameplay networking only after validating feature parity in browser.
 
 The highest risk is not the Unity version itself. The highest risk is that gameplay, animation, ownership and network synchronization are currently coupled and partially undocumented.
 
@@ -44,6 +61,7 @@ Actions:
 - Fix compile issues.
 - Update only minor package versions compatible with Unity 2021.
 - Keep Mirror as-is initially.
+- Validate a WebGL build early.
 
 Pros:
 
@@ -67,7 +85,7 @@ Actions:
 - Duplicate project / branch.
 - Open with Unity 6 LTS.
 - Update packages.
-- Validate shaders, Input System, Addressables, UI, Mirror and build targets.
+- Validate shaders, Input System, Addressables, UI, Mirror and WebGL build targets.
 
 Pros:
 
@@ -80,10 +98,11 @@ Cons:
 - Mirror compatibility must be validated.
 - Asset/shader/package issues likely.
 - Possible API breaks in old third-party assets.
+- WebGL build/runtime behavior must be retested, not assumed.
 
 Recommended after the conservative baseline passes.
 
-## Networking options
+## Networking options for browser/WebGL
 
 ### Option A - Keep Mirror, but clean integration
 
@@ -92,8 +111,16 @@ Current situation:
 - Mirror is embedded in `Assets/Mirror`.
 - Some Mirror core files appear modified directly.
 
+WebGL compatibility assessment:
+
+- Mirror can be viable for browser builds if using a WebSocket-compatible transport.
+- Do not use UDP/KCP transport for the WebGL client.
+- Native server can run outside the browser, but the browser client should connect through WebSocket/WSS.
+
 Recommended if keeping Mirror:
 
+- Confirm which transport is currently configured in the active scene/network manager.
+- Switch/standardize browser builds around WebSocket/WSS transport.
 - Move Mirror to a managed package or clearly isolate it under `_ThirdParty`.
 - Avoid modifying Mirror core files directly.
 - Add `PATCHES.md` documenting any unavoidable changes.
@@ -104,16 +131,18 @@ Pros:
 - Lowest migration cost.
 - Existing player/spawn/sync logic probably already depends on it.
 - Good short-term path to preserve current functionality.
+- Most likely path to keep browser functionality with minimal rewrite.
 
 Cons:
 
 - Current integration is messy.
 - Local vendor modifications make upgrades risky.
 - Future Mirror upgrades may be painful.
+- WebSocket may add more overhead/latency than UDP-based transports.
 
 Best use case:
 
-- Keep the current game working while cleaning architecture.
+- Keep the current browser game working while cleaning architecture.
 
 ### Option B - Migrate to Unity Netcode for GameObjects
 
@@ -123,6 +152,12 @@ What it gives:
 - Integrated with Unity Transport and Unity Multiplayer Services.
 - Current Netcode for GameObjects 2.x targets modern Unity versions.
 - Supports GameObject/world-state synchronization, host/client-server workflows and newer distributed authority concepts.
+
+WebGL compatibility assessment:
+
+- Potentially viable for browser only if the chosen Unity Transport configuration supports WebSocket for WebGL.
+- Should not be selected until a Unity WebGL build can connect to a real server through WebSocket/WSS.
+- Treat this as a Unity 6 modernization prototype, not as a direct replacement in the current project.
 
 Pros:
 
@@ -135,10 +170,11 @@ Cons:
 - Not a drop-in Mirror replacement.
 - Requires rewriting `NetworkBehaviour`, RPCs, SyncVars/NetworkVariables, spawning, authority checks and transform synchronization.
 - Latest NGO direction is coupled to newer Unity versions.
+- Browser transport compatibility must be validated very early.
 
 Best use case:
 
-- Strategic modernization if the project is going to continue evolving seriously.
+- Strategic modernization if the project is going to continue evolving seriously and Unity ecosystem alignment matters.
 
 ### Option C - Migrate to Fish-Networking
 
@@ -146,8 +182,13 @@ What it gives:
 
 - Free Unity networking solution.
 - Server-authoritative by design but allows host mode.
-- No CCU cap/paywall according to its positioning.
 - Broad topology support through transports.
+
+WebGL compatibility assessment:
+
+- Do not assume browser compatibility from the high-level framework.
+- It is only viable if the selected Fish-Networking transport supports WebSocket/WebGL properly.
+- Needs a dedicated browser prototype before committing.
 
 Pros:
 
@@ -159,28 +200,45 @@ Cons:
 
 - Still requires a real migration.
 - Smaller ecosystem than Unity official tooling.
+- Transport choice is critical for WebGL.
 - Needs a dedicated prototype before committing.
 
 Best use case:
 
-- Robust server-authoritative architecture without depending heavily on Unity Gaming Services.
+- Robust server-authoritative architecture without depending heavily on Unity Gaming Services, if WebGL transport validation passes.
 
 ### Option D - Photon Fusion
 
 Worth evaluating separately for production multiplayer, especially if we want hosted/session services, prediction-oriented gameplay and commercial tooling.
 
-However, this is a product/platform decision because it introduces vendor pricing, cloud dependency and a different architecture mindset.
+WebGL compatibility assessment:
 
-## Recommended decision
+- Must be checked against current Photon Fusion WebGL support, pricing and deployment requirements.
+- If browser support is first-class, it can be attractive, but it becomes a vendor/platform decision.
 
-My recommendation for this project:
+Cons:
 
-1. **Short term:** keep Mirror, clean current architecture and document authority/spawning.
-2. **Medium term:** upgrade Unity in stages.
-3. **Strategic branch:** prototype Unity Netcode for GameObjects and Fish-Networking in parallel using the same minimal gameplay scenario.
-4. Choose the final networking system based on prototype results, not theory.
+- Pricing/vendor dependency.
+- Different architecture mindset.
+- Migration effort is still high.
 
-I would not migrate networking before we have a clean `PlayerRuntimeMap`.
+## Recommended decision after considering WebGL
+
+The browser requirement changes the recommendation:
+
+1. **Short term:** keep Mirror if it can run with a WebSocket/WSS transport in the current project.
+2. **Medium term:** clean Mirror integration and document the exact browser transport setup.
+3. **Strategic branch:** prototype Netcode for GameObjects and Fish-Networking only if they can prove WebGL/WSS connectivity.
+4. Do not prioritize any UDP-first stack for the WebGL client.
+
+Current preference with browser target:
+
+```text
+1. Mirror + WebSocket/WSS transport, cleaned and documented.
+2. Unity NGO only after WebGL WebSocket prototype succeeds.
+3. Fish-Networking only after WebGL transport prototype succeeds.
+4. Photon Fusion only if vendor dependency/pricing is acceptable and WebGL support is confirmed.
+```
 
 ## Minimum functionality to preserve
 
@@ -197,9 +255,11 @@ Before changing networking, document and test:
 - Audio behavior local vs remote.
 - Scene loading.
 - Disconnect/reconnect behavior.
-- WebGL fullscreen/build behavior if still relevant.
+- WebGL fullscreen/build behavior.
+- Browser connection through `wss://`.
+- Server hosting behind HTTPS/WSS reverse proxy if needed.
 
-## Prototype plan
+## WebGL networking prototype plan
 
 Create a separate small scene, not touching the current gameplay scene:
 
@@ -209,36 +269,36 @@ Assets/_Project/Scenes/NetworkingPrototype.unity
 
 Prototype requirements:
 
+- Build as WebGL.
+- Host server as native standalone/headless, not inside browser.
+- Browser client connects through `wss://`.
 - Spawn 2 players.
 - Move local player.
 - Sync remote transform smoothly.
 - Sync velocity/state for animation.
 - Spawn/despawn a simple network object.
-- Test host/client and dedicated server if relevant.
-- Measure code complexity and migration friction.
+- Test reconnect/disconnect.
+- Measure latency and jitter from browser.
+- Confirm it works behind the intended deployment environment.
 
-Implement the same prototype twice:
-
-```text
-Prototype_NGO
-Prototype_FishNet
-```
-
-Optionally a third baseline:
+Implement the same prototype with:
 
 ```text
-Prototype_MirrorClean
+Prototype_MirrorWebSocket
+Prototype_NGO_WebSocket
+Prototype_FishNet_WebSocket
 ```
 
 Decision criteria:
 
-- Ease of migration from current code.
-- Authority model clarity.
-- WebGL/desktop compatibility.
-- Server hosting options.
-- Debuggability.
-- Amount of glue code required.
-- Long-term maintainability.
+- Does WebGL build compile?
+- Does browser connect through WSS?
+- Is server hosting simple?
+- Does reconnect work?
+- Is latency acceptable?
+- Can it handle current player movement/animation sync?
+- How much glue code is needed?
+- How painful is migration from current code?
 
 ## Proposed branch roadmap
 
@@ -249,45 +309,56 @@ Purpose:
 - Open with current Unity.
 - Confirm compile status.
 - Document runtime map.
+- Confirm current WebGL build status.
 - No package/network migration yet.
 
 Deliverable:
 
 ```text
 PLAYER_RUNTIME_MAP.md
+WEBGL_BASELINE_NOTES.md
 ```
 
-### Branch 2 - `upgrade/unity-2021-latest-lts`
+### Branch 2 - `networking/mirror-websocket-baseline`
+
+Purpose:
+
+- Identify and standardize Mirror WebSocket/WSS transport.
+- Confirm browser client connection.
+- Document server deployment notes.
+
+### Branch 3 - `upgrade/unity-2021-latest-lts`
 
 Purpose:
 
 - Upgrade only within Unity 2021 LTS patch line.
-- Keep Mirror.
+- Keep Mirror WebSocket.
 - Fix compile/import warnings.
+- Validate WebGL build.
 
-### Branch 3 - `upgrade/unity-6-compatibility`
+### Branch 4 - `upgrade/unity-6-compatibility`
 
 Purpose:
 
 - Test Unity 6 compatibility.
 - Do not migrate networking yet.
-- Identify package/shader/API breaks.
+- Identify package/shader/API/WebGL breaks.
 
-### Branch 4 - `prototype/networking-ngo`
-
-Purpose:
-
-- Small isolated prototype using Netcode for GameObjects.
-- Validate spawn/authority/sync.
-
-### Branch 5 - `prototype/networking-fishnet`
+### Branch 5 - `prototype/networking-ngo-webgl`
 
 Purpose:
 
-- Same isolated prototype using Fish-Networking.
-- Compare complexity and stability.
+- Isolated WebGL prototype using Netcode for GameObjects.
+- Validate browser WSS connectivity, spawn, authority and sync.
 
-### Branch 6 - `refactor/network-abstraction`
+### Branch 6 - `prototype/networking-fishnet-webgl`
+
+Purpose:
+
+- Isolated WebGL prototype using Fish-Networking.
+- Validate browser WSS connectivity, spawn, authority and sync.
+
+### Branch 7 - `refactor/network-abstraction`
 
 Purpose:
 
@@ -330,18 +401,20 @@ The networking stack should become an implementation detail, not something sprea
 
 ## Final recommendation
 
-Best practical route:
+Best practical route for a browser game:
 
 1. Keep Mirror for now.
-2. Fix compile/runtime safety.
-3. Document active player prefab and authority model.
-4. Upgrade Unity conservatively.
-5. Test Unity 6 separately.
-6. Prototype NGO and FishNet separately.
-7. Migrate only if one prototype clearly beats cleaned Mirror.
+2. Confirm current WebGL build and current transport.
+3. Move toward Mirror + WebSocket/WSS as baseline.
+4. Fix compile/runtime safety.
+5. Document active player prefab and authority model.
+6. Upgrade Unity conservatively.
+7. Test Unity 6 separately.
+8. Prototype NGO/FishNet only through real WebGL/WSS builds.
+9. Migrate only if one prototype clearly beats cleaned Mirror.
 
 Current preference:
 
-- Small/experimental multiplayer game: **clean Mirror first**.
-- Serious long-term Unity project: **Unity 6 + Netcode for GameObjects** is worth prototyping.
-- Strong authoritative networking without Unity service dependency: **Fish-Networking** is the strongest alternative to prototype.
+- Browser-first + minimal risk: **clean Mirror + WebSocket/WSS**.
+- Browser-first + long-term Unity ecosystem: **Unity 6 + NGO**, but only after WebGL prototype.
+- Browser-first + stronger authoritative networking: **Fish-Networking**, but only if WebGL transport is proven.
