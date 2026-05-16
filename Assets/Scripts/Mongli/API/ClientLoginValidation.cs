@@ -12,7 +12,7 @@ public class ClientLoginValidation : MonoBehaviour
     IEnumerator SendToken(string token)
     {
         string serverUrl = "http://localhost:3000";
-        UnityWebRequest request = UnityWebRequest.Post(serverUrl, token);
+        UnityWebRequest request = UnityWebRequest.PostWwwForm(serverUrl, token);
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
@@ -24,13 +24,13 @@ public class ClientLoginValidation : MonoBehaviour
             string response = request.downloadHandler.text;
             if (response == "OK")
             {
-                Debug.Log("Conexión aceptada");
-                // Procesar la conexión exitosa aquí
+                Debug.Log("Conexiï¿½n aceptada");
+                // Procesar la conexiï¿½n exitosa aquï¿½
             }
             else
             {
-                Debug.Log("Conexión rechazada");
-                // Redirigir a otra página o mostrar un mensaje de error
+                Debug.Log("Conexiï¿½n rechazada");
+                // Redirigir a otra pï¿½gina o mostrar un mensaje de error
             }
         }
     }
