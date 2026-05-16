@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using ElTesoroDeMongli.API;
 using ElTesoroDeMongli.API.Models;
+using LoginApiResponse = ElTesoroDeMongli.API.Models.LoginResponse;
+using RegisterApiResponse = ElTesoroDeMongli.API.Models.RegisterResponse;
 
 namespace ElTesoroDeMongli.Auth
 {
@@ -15,9 +17,9 @@ namespace ElTesoroDeMongli.Auth
             this.sessionService = sessionService;
         }
 
-        public async Task<LoginResponse> LoginAsync(string login, string password)
+        public async Task<LoginApiResponse> LoginAsync(string login, string password)
         {
-            LoginResponse response = await apiClient.LoginAsync(new LoginRequest(login, password));
+            LoginApiResponse response = await apiClient.LoginAsync(new LoginRequest(login, password));
 
             if (response.IsSuccess && response.content != null)
             {
@@ -30,7 +32,7 @@ namespace ElTesoroDeMongli.Auth
             return response;
         }
 
-        public Task<RegisterResponse> RegisterAsync(string mail, string password, string nickname)
+        public Task<RegisterApiResponse> RegisterAsync(string mail, string password, string nickname)
         {
             return apiClient.RegisterAsync(new RegisterRequest(mail, password, nickname));
         }

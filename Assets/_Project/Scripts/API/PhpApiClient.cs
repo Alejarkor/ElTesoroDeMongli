@@ -4,6 +4,10 @@ using ElTesoroDeMongli.API.Models;
 using ElTesoroDeMongli.Config;
 using UnityEngine;
 using UnityEngine.Networking;
+using LoginApiResponse = ElTesoroDeMongli.API.Models.LoginResponse;
+using RegisterApiResponse = ElTesoroDeMongli.API.Models.RegisterResponse;
+using GetUsersApiResponse = ElTesoroDeMongli.API.Models.GetUsersResponse;
+using UpdateUsersApiResponse = ElTesoroDeMongli.API.Models.UpdateUsersResponse;
 
 namespace ElTesoroDeMongli.API
 {
@@ -16,24 +20,24 @@ namespace ElTesoroDeMongli.API
             this.config = config;
         }
 
-        public Task<LoginResponse> LoginAsync(LoginRequest request)
+        public Task<LoginApiResponse> LoginAsync(LoginRequest request)
         {
-            return PostAsync<LoginRequest, LoginResponse>("login/", request);
+            return PostAsync<LoginRequest, LoginApiResponse>("login/", request);
         }
 
-        public Task<RegisterResponse> RegisterAsync(RegisterRequest request)
+        public Task<RegisterApiResponse> RegisterAsync(RegisterRequest request)
         {
-            return PostAsync<RegisterRequest, RegisterResponse>("register/", request);
+            return PostAsync<RegisterRequest, RegisterApiResponse>("register/", request);
         }
 
-        public Task<GetUsersResponse> GetUsersAsync()
+        public Task<GetUsersApiResponse> GetUsersAsync()
         {
-            return PostAsync<object, GetUsersResponse>("get_users/", new EmptyRequest());
+            return PostAsync<object, GetUsersApiResponse>("get_users/", new EmptyRequest());
         }
 
-        public Task<UpdateUsersResponse> UpdateUsersAsync(UpdateUsersRequest request)
+        public Task<UpdateUsersApiResponse> UpdateUsersAsync(UpdateUsersRequest request)
         {
-            return PostAsync<UpdateUsersRequest, UpdateUsersResponse>("update_users/", request);
+            return PostAsync<UpdateUsersRequest, UpdateUsersApiResponse>("update_users/", request);
         }
 
         private async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest request)

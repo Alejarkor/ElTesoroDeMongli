@@ -1,0 +1,628 @@
+PLAN_COMPLETO_REFACTORIZACION_EL_TESORO_DE_MONGLI
+=================================================
+
+Documento único de planificación y seguimiento del refactor del proyecto.
+
+Ramas de trabajo desde ahora:
+- Juego: refactor/all-in-one
+- API: refactor/api-local-config
+
+Ramas antiguas de documentación/auditoría:
+- audit/gameplay-architecture-review
+- docs/player-runtime-map
+- docs/project-architecture-review
+- docs/refactor-execution-plan
+- docs/system-map-api-contract
+- docs/upgrade-networking-study
+- docs/windows-local-deployment-guide
+- refactor/integrated-roadmap
+
+Estas ramas quedan absorbidas por este plan. Ignorarlas salvo que haga falta recuperar histórico.
+
+Leyenda:
+[ ] Pendiente
+[/] En progreso
+[x] Hecho
+[?] Requiere validación manual
+[!] Bloqueado / requiere decisión
+
+
+0. ESTADO BASE
+==============
+
+Proyecto Unity:
+- Repo: Alejarkor/ElTesoroDeMongli
+- Unity: 2021.3.4f1
+- Escena activa: Assets/Scenes/MONGLICLIENT.unity
+- Networking: Mirror
+- Transporte WebGL disponible: SimpleWebTransport
+- Target: navegador/WebGL, incluyendo iOS y Android
+
+API:
+- Repo: sergio4anso/ElTesoroDeMongliAPI
+- Stack: PHP procedural + MySQL/MariaDB
+- DB local: eltesorodemongli
+- Tablas detectadas: users, access_tokens
+- Endpoints principales: register, login, validation, get_users, update_users
+
+Regla arquitectónica:
+- API/DB: login, registro, tokens, perfil, progreso, persistencia puntual.
+- Mirror/WSS: realtime, jugadores conectados, spawn, movimiento, animaciones.
+- WebGL client: UI, input, presentación, interpolación, conexión API y WebSocket.
+- La DB no debe usarse como bus principal de movimiento realtime.
+
+
+1. API LOCAL Y BASE DE DATOS
+============================
+
+Rama:
+sergio4anso/ElTesoroDeMongliAPI -> refactor/api-local-config
+
+Hecho:
+[x] XAMPP instalado/arrancado.
+[x] Apache funcionando.
+[x] MySQL/MariaDB funcionando.
+[x] Base de datos eltesorodemongli detectada.
+[x] Tablas users y access_tokens detectadas.
+[x] config_loader.php creado.
+[x] config.example.php creado.
+[x] config.local.php ignorado por Git.
+[x] connection.php refactorizado para leer configuración local/env.
+[x] activationMail refactorizado para leer configuración local/env.
+[x] Mail desactivable en local.
+[x] Migración SQL inicial creada.
+[x] Registro probado.
+[x] Error de password error_code = 8 detectado correctamente.
+[x] Error Cannot redeclare... corregido con require_once.
+[x] Usuario activado manualmente en DB.
+[x] Login probado tras activar usuario.
+
+Pendiente:
+[ ] Probar POST /get_users/
+[ ] Probar POST /update_users/
+[ ] Revisar si la tabla users real tiene columna equipment.
+[ ] Actualizar migración inicial si equipment forma parte del modelo real.
+[ ] Mergear API PR #2 cuando endpoints básicos funcionen.
+[ ] Crear correo técnico propio del proyecto más adelante.
+[ ] Mantener mail disabled en local hasta que haga falta.
+
+Comandos de prueba:
+
+GET_USERS:
+Invoke-RestMethod `
+  -Method Post `
+  -Uri "http://localhost/ElTesoroDeMongliAPI/get_users/" `
+  -ContentType "application/json" `
+  -Body '{}'
+
+UPDATE_USERS:
+Invoke-RestMethod `
+  -Method Post `
+  -Uri "http://localhost/ElTesoroDeMongliAPI/update_users/" `
+  -ContentType "application/json" `
+  -Body '{"usersUpdateData":[{"id":1,"transform":{"position":{"x":0,"y":1,"z":2},"rotation":{"x":0,"y":0,"z":0,"w":1}}}]}'
+
+Criterio de salida:
+[ ] register funciona.
+[ ] login funciona.
+[ ] get_users funciona.
+[ ] update_users funciona.
+[ ] no hay errores PHP en C:\xampp\apache\logs\error.log.
+[ ] no hay credenciales reales hardcodeadas.
+[ ] config.local.php queda fuera de Git.
+
+
+2. BASELINE UNITY
+=================
+
+Rama:
+refactor/all-in-one
+
+Objetivo:
+Abrir el proyecto y saber qué está activo de verdad.
+
+Pendiente:
+[ ] Abrir proyecto en Unity 2021.3.4f1 o compatible 2021.3 LTS.
+[ ] Confirmar que el proyecto compila.
+[ ] Revisar errores de consola.
+[ ] Abrir escena Assets/Scenes/MONGLICLIENT.unity.
+[ ] Confirmar si MONGLICLIENT es cliente puro o también host.
+[ ] Localizar NetworkManager.
+[ ] Confirmar clase concreta del NetworkManager.
+[ ] Confirmar transporte activo.
+[ ] Confirmar si el transporte activo es SimpleWebTransport.
+[ ] Confirmar puerto real.
+[ ] Confirmar configuración ws/wss.
+[ ] Localizar Player Prefab.
+[ ] Documentar componentes del Player Prefab.
+[ ] Confirmar scripts local-only.
+[ ] Confirmar scripts remote-only.
+[ ] Confirmar scripts server-only.
+[ ] Confirmar dónde está la UI login/register.
+[ ] Confirmar dónde se configura actualmente la API.
+[ ] Confirmar si get_users/update_users se usan para transforms realtime.
+
+Tabla a rellenar:
+NetworkManager GameObject:
+NetworkManager class:
+Transport component:
+Transport port:
+Transport ws/wss setting:
+Player Prefab path:
+Player Prefab root scripts:
+Local-only scripts:
+Remote-only scripts:
+Server-only scripts:
+Scene that starts server:
+Scene that starts client:
+API config location actual:
+Login UI script:
+Register UI script:
+Movement script:
+Animation script:
+Audio script:
+Network sync script:
+
+
+3. CONFIGURACIÓN CENTRALIZADA UNITY
+===================================
+
+Rama:
+refactor/all-in-one
+
+Hecho:
+[x] EnvironmentType.
+[x] EnvironmentConfig como ScriptableObject.
+[x] API Base URL.
+[x] Game Server Host.
+[x] Game Server Port.
+[x] Use Secure WebSocket.
+[x] WebSocketScheme ws/wss.
+[x] GameServerUri.
+[x] EnvironmentConfigProvider.
+
+Pendiente en Unity:
+[ ] Crear asset LocalhostEnvironmentConfig.
+[ ] Crear asset LocalNetworkEnvironmentConfig.
+[ ] Crear asset ProductionEnvironmentConfig.
+[ ] Añadir GameObject EnvironmentConfigProvider en escena cliente/boot.
+[ ] Asignar LocalhostEnvironmentConfig.
+[ ] Confirmar log de carga.
+[ ] Decidir si se necesita escena Boot.
+[ ] Localizar scripts con URLs hardcodeadas.
+[ ] Reemplazar referencias sueltas por EnvironmentConfig.
+
+Valores Localhost:
+- Environment Type: Localhost
+- API Base URL: http://localhost/ElTesoroDeMongliAPI/
+- Game Server Host: localhost
+- Game Server Port: 7778
+- Use Secure WebSocket: false
+
+Valores LAN:
+- Environment Type: LocalNetwork
+- API Base URL: http://192.168.1.X/ElTesoroDeMongliAPI/
+- Game Server Host: 192.168.1.X
+- Game Server Port: 7778
+- Use Secure WebSocket: false
+
+Valores Producción:
+- Environment Type: Production
+- API Base URL: https://your-domain.example/ElTesoroDeMongliAPI/
+- Game Server Host: your-domain.example
+- Game Server Port: 443
+- Use Secure WebSocket: true
+
+
+4. API CLIENT UNITY
+===================
+
+Rama:
+refactor/all-in-one
+
+Objetivo:
+Centralizar las llamadas HTTP a la API.
+
+Hecho:
+[x] ApiResponse.
+[x] LoginRequest.
+[x] LoginResponse.
+[x] RegisterRequest.
+[x] RegisterResponse.
+[x] GetUsersResponse.
+[x] UpdateUsersRequest.
+[x] UpdateUsersResponse.
+[x] ApiException.
+[x] UnityWebRequestAwaiter.
+[x] IAuthApiClient.
+[x] IUserApiClient.
+[x] PhpApiClient.
+[x] UserSession.
+[x] SessionService.
+[x] AuthService.
+
+Pendiente:
+[?] Confirmar que async/await compila con la configuración del proyecto.
+[?] Confirmar que UnityWebRequest.Result existe en Unity 2021.3.
+[?] Confirmar serialización JsonUtility.
+[?] Confirmar Vector3/Quaternion en modelos API.
+[ ] Crear test temporal de login desde Unity.
+[ ] Llamar AuthService.LoginAsync.
+[ ] Confirmar que se obtiene user_id y token.
+[ ] Guardar sesión en SessionService.
+[ ] Integrar con UI login existente.
+[ ] Mostrar mensajes según error_code.
+
+Flujo objetivo:
+LoginScreen -> AuthService.LoginAsync -> PhpApiClient.LoginAsync -> POST /login/ -> SessionService.SetSession
+RegisterScreen -> AuthService.RegisterAsync -> PhpApiClient.RegisterAsync -> POST /register/
+
+
+5. WEBGL / MOBILE DIAGNOSTICS
+=============================
+
+Rama futura:
+feature/webgl-diagnostics
+
+Objetivo:
+Saber si un fallo viene de navegador, WebGL, API, red, audio, fullscreen o Unity.
+
+Diagnóstico navegador:
+[ ] Mostrar User Agent.
+[ ] Mostrar plataforma.
+[ ] Mostrar resolución.
+[ ] Mostrar devicePixelRatio.
+[ ] Detectar WebGL 1.
+[ ] Detectar WebGL 2.
+[ ] Detectar WebAssembly.
+[ ] Detectar WebSocket.
+[ ] Detectar AudioContext.
+[ ] Detectar Touch Events.
+[ ] Detectar Pointer Events.
+[ ] Detectar Fullscreen API.
+[ ] Detectar IndexedDB/localStorage.
+
+UX móvil:
+[ ] Pantalla Tap to start.
+[ ] Desbloqueo de audio tras gesto de usuario.
+[ ] Evitar dependencia de fullscreen real en iOS.
+[ ] Probar orientación vertical/horizontal.
+[ ] Evitar scroll/zoom accidental.
+[ ] Manejar pause/background/resume.
+
+Build info:
+[ ] Mostrar versión de build.
+[ ] Mostrar commit/hash si se puede.
+[ ] Mostrar entorno activo.
+[ ] Mostrar API URL.
+[ ] Mostrar Game Server URI.
+[ ] Mostrar modo ws/wss.
+
+Smoke test:
+[ ] Escena mínima de test.
+[ ] Unity carga.
+[ ] Input funciona.
+[ ] Audio unlock funciona.
+[ ] API responde.
+[ ] WebSocket conecta.
+[ ] Objeto local se mueve.
+[ ] Echo/roundtrip con servidor funciona.
+[ ] Chrome desktop OK.
+[ ] Android Chrome OK.
+[ ] iOS Safari OK.
+
+
+6. RUNTIME SAFETY
+=================
+
+6.1 Sensor.cs
+-------------
+
+Hecho:
+[x] Evitar IndexOutOfRange si no hay hits.
+[x] Inicializar ignore list.
+[x] Null guards en ignore list.
+[x] Restaurar capas con try/finally.
+
+Pendiente:
+[?] Probar movimiento en suelo plano.
+[?] Probar pendientes.
+[?] Probar salto.
+[?] Probar caída.
+[?] Probar ground detection.
+[?] Confirmar que no rompe Character Movement Fundamentals.
+
+6.2 AudioControl
+----------------
+
+Rama futura:
+refactor/audio-control-safety
+
+[ ] Localizar AudioControl.cs activo.
+[ ] Añadir null guards.
+[ ] Evitar errores si footStepClips está vacío.
+[ ] Evitar errores si jumpClip/landClip son null.
+[ ] Mover suscripciones a OnEnable/OnDisable.
+[ ] Evitar audio en server/headless.
+[ ] Diferenciar audio local/remoto si aplica.
+
+6.3 AnimationControl
+--------------------
+
+[ ] Localizar AnimationControl activo.
+[ ] Confirmar existencia de MongliWallkerController.
+[ ] Confirmar existencia de MongliAnimatorNetworkController.
+[ ] Confirmar existencia de MongliAnimatorLocalController.
+[ ] Corregir typo Wallker -> Walker solo con refactor controlado.
+[ ] Cachear Animator.StringToHash.
+[ ] Reducir ramas duplicadas local/network.
+[ ] Preparar IAnimatorDriver.
+
+
+7. NETWORK IDENTITY ADAPTER
+===========================
+
+Rama futura:
+refactor/network-identity-adapter
+
+Objetivo:
+Encapsular Mirror para que gameplay no dependa directamente de Mirror por todos lados.
+
+Tareas:
+[ ] Crear INetworkPlayerIdentity.
+[ ] Crear MirrorNetworkPlayerIdentity.
+[ ] Exponer IsLocalPlayer.
+[ ] Exponer IsOwner.
+[ ] Exponer IsServer.
+[ ] Exponer NetworkId.
+[ ] Localizar scripts propios que usan Mirror directamente.
+[ ] Cambiar solo scripts propios.
+[ ] No tocar Mirror interno.
+[ ] Probar cliente local.
+[ ] Probar cliente remoto.
+[ ] Probar host/server si aplica.
+
+Interfaz objetivo:
+public interface INetworkPlayerIdentity
+{
+    bool IsLocalPlayer { get; }
+    bool IsOwner { get; }
+    bool IsServer { get; }
+    ulong NetworkId { get; }
+}
+
+
+8. PLAYER STATE / PRESENTATION
+==============================
+
+Rama futura:
+refactor/player-state-presentation
+
+Objetivo:
+Separar movimiento, estado, animación y audio.
+
+PlayerState:
+[ ] Crear PlayerState.
+[ ] Centralizar velocidad.
+[ ] Centralizar grounded.
+[ ] Centralizar jumping/falling.
+[ ] Centralizar movement mode.
+[ ] Centralizar eventos jump/land si aplica.
+
+Presenters:
+[ ] Crear PlayerAnimationPresenter.
+[ ] Crear PlayerAudioPresenter.
+[ ] Animation lee PlayerState.
+[ ] Audio lee PlayerState.
+[ ] NetworkSync lee/escribe estado de forma controlada.
+
+Arquitectura objetivo:
+Input -> Movement -> PlayerState -> AnimationPresenter
+                                -> AudioPresenter
+                                -> NetworkSync
+
+
+9. INPUT ABSTRACTION
+====================
+
+Rama futura:
+refactor/player-input-source
+
+Objetivo:
+Unificar desktop, móvil, gamepad y futuros bots/replay.
+
+Tareas:
+[ ] Crear IPlayerInputSource.
+[ ] Crear DesktopInputSource.
+[ ] Crear MobileTouchInputSource si aplica.
+[ ] Crear GamepadInputSource si aplica.
+[ ] Movement consume interfaz.
+[ ] Validar teclado/ratón.
+[ ] Validar móvil/touch.
+[ ] Validar gamepad si aplica.
+
+Interfaz objetivo:
+public interface IPlayerInputSource
+{
+    Vector2 Move { get; }
+    Vector2 Look { get; }
+    bool JumpPressed { get; }
+    bool SprintHeld { get; }
+    bool AttackPressed { get; }
+}
+
+
+10. SPAWN / SESSION CENTRALIZADOS
+=================================
+
+Rama futura:
+refactor/network-spawn-session
+
+Objetivo:
+Que haya un sitio claro donde nacen y mueren jugadores.
+
+Tareas:
+[ ] Localizar NetworkManager real.
+[ ] Confirmar si hay custom NetworkManager.
+[ ] Crear PlayerSpawnService.
+[ ] Crear ConnectedPlayersRegistry.
+[ ] Documentar spawn points.
+[ ] Manejar disconnect.
+[ ] Manejar reconnect si aplica.
+[ ] Evitar spawn logic en movement/UI.
+
+
+11. PERSISTENCIA VS REALTIME
+============================
+
+Rama futura:
+refactor/persistence-realtime-boundary
+
+Objetivo:
+Separar estado persistente y estado realtime.
+
+Tareas:
+[ ] Confirmar si get_users/update_users se usan por frame.
+[ ] Si se usan por frame, eliminar ese patrón.
+[ ] Mantener transform realtime en Mirror.
+[ ] Usar API solo para persistencia puntual.
+[ ] Crear UserPersistenceService.
+[ ] Guardar estado por eventos o intervalos bajos.
+[ ] Añadir token a update_users futuro.
+[ ] Evitar que cualquiera pueda modificar transforms sin autenticación.
+
+
+12. REORGANIZACIÓN DE CARPETAS
+==============================
+
+Rama futura:
+chore/reorganize-project-folders
+
+No hacer todavía.
+
+Estructura objetivo:
+Assets/
+  _Project/
+    Scenes/
+    Scripts/
+      Core/
+      Config/
+      API/
+      Auth/
+      Gameplay/
+      Input/
+      Networking/
+      UI/
+      Audio/
+      WebGL/
+      Diagnostics/
+    Prefabs/
+    ScriptableObjects/
+    Art/
+  _ThirdParty/
+    Mirror/
+    CharacterMovementFundamentals/
+    IngameDebugConsole/
+
+Reglas:
+[ ] Mover desde Unity Editor cuando sea posible.
+[ ] No mover Mirror todavía.
+[ ] No mover assets grandes antes de validar.
+[ ] Validar escenas después de cada bloque.
+[ ] Mantener GUIDs.
+[ ] Hacer commits pequeños.
+
+
+13. UPGRADE UNITY / NETWORKING
+==============================
+
+No hacer todavía.
+
+Objetivo:
+Modernizar sin romper WebGL.
+
+Unity:
+[ ] Probar Unity 2021 LTS más reciente.
+[ ] Validar WebGL.
+[ ] Validar Mirror.
+[ ] Validar Input System.
+[ ] Validar Addressables.
+[ ] Probar Unity 6 en rama separada.
+
+Networking:
+1. Mirror + SimpleWebTransport ws/wss.
+2. NGO si WebGL + WebSocket se valida.
+3. FishNet si WebGL + WebSocket se valida.
+4. Photon Fusion si compensa vendor/pricing.
+
+Checklist:
+[ ] Confirmar Mirror actual funciona con WebGL.
+[ ] Confirmar ws:// local.
+[ ] Confirmar wss:// producción.
+[ ] Crear Prototype_MirrorWebSocket.
+[ ] Crear Prototype_NGO_WebSocket.
+[ ] Crear Prototype_FishNet_WebSocket.
+[ ] Decidir con datos, no por teoría.
+
+
+14. ORDEN INMEDIATO
+===================
+
+1. Usar rama del juego:
+   refactor/all-in-one
+
+2. Usar rama de API:
+   refactor/api-local-config
+
+3. Terminar pruebas API:
+   [ ] get_users
+   [ ] update_users
+
+4. Abrir Unity con refactor/all-in-one.
+
+5. Corregir errores de compilación.
+
+6. Crear LocalhostEnvironmentConfig.
+
+7. Añadir EnvironmentConfigProvider.
+
+8. Validar Sensor/movimiento.
+
+9. Localizar UI login/register.
+
+10. Conectar UI a AuthService.
+
+11. Crear diagnóstico WebGL/móvil.
+
+
+15. COMANDOS ÚTILES
+===================
+
+Juego:
+git checkout refactor/all-in-one
+git pull
+
+API:
+cd C:\xampp\htdocs\ElTesoroDeMongliAPI
+git checkout refactor/api-local-config
+git pull
+
+Ver rama actual:
+git branch --show-current
+
+Volver a main:
+git checkout main
+git pull
+
+
+16. CONCLUSIÓN
+==============
+
+Desde ahora el camino limpio es:
+
+- Juego: refactor/all-in-one
+- API: refactor/api-local-config
+- Plan: este documento
+- Objetivo inmediato: API completa + Unity compila + config centralizada + login integrado
+
+No seguir creando ramas de documentación salvo que haga falta.
