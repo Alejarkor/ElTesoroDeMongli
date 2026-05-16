@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,49 +7,51 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class MongliAPIConnector 
+public class MongliAPIConnector
 {
     private const string API_URL = "http://127.0.0.1/ElTesoroDeMongliAPI/";
-    private const string MONGLI_KEY = "9b60821d-e697-43c0-9222-f4e78be037b8";   
+    private const string MONGLI_KEY = "9b60821d-e697-43c0-9222-f4e78be037b8";
 
+    [Serializable]
+    private class JsonStringValue
+    {
+        public string value;
+    }
 
-    public static string MongliToJson<T>(T ob) 
+    public static string MongliToJson<T>(T ob)
     {
         string message = JsonUtility.ToJson(ob);
-        message = JsonConvert.SerializeObject(message);
-        return message;
+        return $"\"{EscapeJsonString(message)}\"";
     }
-    public static T MongliFromJson<T>(string json) 
+
+    public static T MongliFromJson<T>(string json)
     {
-        json = JsonConvert.DeserializeObject<string>(json);
-        T data = JsonUtility.FromJson<T>(json);
+        string unwrappedJson = UnwrapJsonString(json);
+        T data = JsonUtility.FromJson<T>(unwrappedJson);
         return data;
     }
+
     public static IEnumerator ValidateLoginCoroutine(int userId, string token, Action<LoginResponse> onComplete)
     {
-        // Crear el objeto JSON para enviar al servidor
         string json = $"{{\r\n    \"user_id\": {userId},\r\n    \"token\": \"{token}\"\r\n}}";
 
-        // Crear una solicitud UnityWebRequest
-        UnityWebRequest request = new UnityWebRequest(API_URL+ "validate_login/", "POST");
+        UnityWebRequest request = new UnityWebRequest(API_URL + "validate_login/", "POST");
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("mongli_key", MONGLI_KEY);
 
-        // Enviar la solicitud y esperar la respuesta
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            var responseContent = request.downloadHandler.text;
-            var loginResponse = JsonUtility.FromJson<LoginResponse>(responseContent);
+            string responseContent = request.downloadHandler.text;
+            LoginResponse loginResponse = JsonUtility.FromJson<LoginResponse>(responseContent);
 
             if (loginResponse.error_code == 0)
             {
                 Debug.Log("userID: " + userId + " cohincide con la base de datos: " + (userId == loginResponse.user_id ? "TRUE" : "FALSE"));
-                // La validación es correcta
                 onComplete?.Invoke(loginResponse);
             }
             else
@@ -61,26 +62,28 @@ public class MongliAPIConnector
         }
         else
         {
-            var loginResponse = new LoginResponse();
+            LoginResponse loginResponse = new LoginResponse();
             loginResponse.error_code = 15;
-            Debug.Log("Error al hacer la petición HTTP: " + request.error);
+            Debug.Log("Error al hacer la peticion HTTP: " + request.error);
             onComplete?.Invoke(loginResponse);
         }
     }
+
     public static async Task<List<UserFetchData>> FetchUsersAsync()
     {
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, API_URL + "get_users/");
         request.Headers.Add("mongli_key", MONGLI_KEY);
-        var content = new StringContent("", null, "text/plain");
+        StringContent content = new StringContent(string.Empty, null, "text/plain");
         request.Content = content;
         HttpResponseMessage response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
         string jsonResponse = await response.Content.ReadAsStringAsync();
-        Debug.Log(jsonResponse);        
+        Debug.Log(jsonResponse);
         UsersFetchData serverResponse = JsonUtility.FromJson<UsersFetchData>(jsonResponse);
         return serverResponse.content;
     }
+
     public static IEnumerator FetchUsersCoroutine()
     {
         using (UnityWebRequest request = new UnityWebRequest(API_URL + "get_users/", "POST"))
@@ -100,11 +103,10 @@ public class MongliAPIConnector
                 string jsonResponse = request.downloadHandler.text;
                 UsersFetchData serverResponse = MongliFromJson<UsersFetchData>(jsonResponse);
                 List<UserFetchData> users = serverResponse.content;
-
-                // Do something with the users array
             }
         }
-    }        
+    }
+
     public static IEnumerator SendUpdateUserDataCoroutine(UsersUpdateData data)
     {
         string jsonContent = JsonUtility.ToJson(data);
@@ -114,22 +116,23 @@ public class MongliAPIConnector
             request.SetRequestHeader("mongli_key", MONGLI_KEY);
             request.SetRequestHeader("Content-Type", "application/json");
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonContent);
-            
+
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
 
-            yield return request.SendWebRequest();            
+            yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.Success)
-            {                
-                var responseContent = request.downloadHandler.text;                
-                var loginResponse = JsonUtility.FromJson<LoginResponse>(responseContent);
+            {
+                string responseContent = request.downloadHandler.text;
+                LoginResponse loginResponse = JsonUtility.FromJson<LoginResponse>(responseContent);
                 if (loginResponse.error_code != 0)
                 {
                     Debug.Log("Error");
-                }                
-            }           
+                }
+            }
         }
     }
+
     internal static UsersUpdateData UsersDataBase(uint user_id, MongliUser mUser)
     {
         UsersUpdateData usersUpdateData = new UsersUpdateData();
@@ -138,9 +141,32 @@ public class MongliAPIConnector
 
         return usersUpdateData;
     }
+
+    private static string EscapeJsonString(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("\r", "\\r")
+            .Replace("\n", "\\n")
+            .Replace("\t", "\\t");
+    }
+
+    private static string UnwrapJsonString(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+            return string.Empty;
+
+        string wrappedJson = "{\"value\":" + json + "}";
+        JsonStringValue container = JsonUtility.FromJson<JsonStringValue>(wrappedJson);
+        return container?.value ?? string.Empty;
+    }
 }
 
-#region Mensaje de respuesta del Login
+[Serializable]
 public struct LoginResponse
 {
     public int error_code;
@@ -148,9 +174,7 @@ public struct LoginResponse
     public string nickname;
     public object transform;
 }
-#endregion
 
-#region Mensaje a recibir de la DB Informacoin de los Usuarios
 [Serializable]
 public class UsersFetchData
 {
@@ -158,37 +182,38 @@ public class UsersFetchData
     public List<UserFetchData> content;
 }
 
-[System.Serializable]
+[Serializable]
 public class UserFetchData
 {
     public uint id;
-    public string nickname;    
+    public string nickname;
     public TransformData transform;
 }
-#endregion
 
-#region Mensaje enviar a la DB Informacion de los Usuarios
-[System.Serializable]
+[Serializable]
 public class UsersUpdateData
 {
     public List<UserUpdateData> usersUpdateData = new List<UserUpdateData>();
 }
-[System.Serializable]
+
+[Serializable]
 public class UserUpdateData
 {
     public uint id;
     public TransformData transform;
 
-    public UserUpdateData(uint userId, MongliUser mUser) 
+    public UserUpdateData(uint userId, MongliUser mUser)
     {
-        this.id = userId;
-        this.transform = new TransformData(mUser.transform);
+        id = userId;
+        transform = new TransformData(mUser.transform);
     }
-    public UserUpdateData(){}
-}
-#endregion
 
-[System.Serializable]
+    public UserUpdateData()
+    {
+    }
+}
+
+[Serializable]
 public class TransformData
 {
     public Vector3 position;
@@ -202,4 +227,3 @@ public class TransformData
         scale = transform.localScale;
     }
 }
-
